@@ -1,0 +1,21 @@
+{
+  "name": "white-room",
+  "owner": {
+    "name": "Matt Williams"
+  },
+  "metadata": {
+    "description": "Personal Claude Code skills.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "white-room",
+      "description": "Personal Claude Code skills. Each one grants a capability by taking options away.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Matt Williams"
+      },
+      "source": "./"
+    }
+  ]
+}
