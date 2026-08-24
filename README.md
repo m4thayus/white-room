@@ -17,3 +17,8 @@ claude plugin install white-room@white-room
 |---|---|
 | `review-changes` | Reviews a PR, a branch or a diff. Produces findings and a verdict, and never edits the code. |
 | `communique` | Drafts anything that leaves the session for another human, and gates it on your approval. |
+
+## Conventions
+
+Commit subjects follow [Conventional Commits](https://www.conventionalcommits.org/). Types in use:
+`feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `build`.
