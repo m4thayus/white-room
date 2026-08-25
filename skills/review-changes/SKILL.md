@@ -205,35 +205,19 @@ None of the three anchors to a line of code, so all three belong in the review b
 One axis per subagent, so no axis sees another's reasoning. Deciding early that a change is "just" a
 rename is how the design-level findings get skipped.
 
-**Dispatch every axis as the `review-axis` agent, except Checks.** The agent carries what all of them
-share — notes only, the five-field finding contract, and the requirement to report a clean pass in
-words. A dispatch restates none of the three.
+**Dispatch through the `white-room:review` workflow.** Pass it `{skillDir, diff, commits, axes,
+sibling}`, where `skillDir` is this skill's absolute base directory and each axis entry is
+`{axis, payload}`. It sets the model per axis, sweeps history behind Standards and Precedent,
+returns every axis report, and posts nothing.
 
-**Checks stays on `general-purpose`,** because it runs the repo's suites and `review-axis` cannot
-write. Its brief carries its own output shape, and its dispatch asks for `no failures` where
-everything passes.
+**Where the Workflow tool is missing, dispatch the axes by hand.** One subagent per axis, as the
+`review-axis` agent — except Checks, which runs the repo's suites and so needs a subagent that can
+write. Send that one to `general-purpose`.
 
-**Dispatch through the `white-room:review` workflow where the Workflow tool is available.** Pass it
-`{skillDir, diff, commits, axes, sibling}`, where `skillDir` is this skill's absolute base directory
-and each axis entry is `{axis, payload}`. It returns every axis report and posts nothing.
-
-**The workflow makes two rules into mechanisms.** It carries the model split below in code, and it
-runs the history sweep as its own stage behind Standards and Precedent. A stage either ran or it did
-not, while a line inside a brief competes with everything else in the prompt — which is how both
-axes once answered a history question from the working tree alone.
-
-**Where the tool is missing, dispatch the axes by hand,** one subagent per axis, following the rest
-of this step.
-
-**Set the model on every dispatch.** An axis inherits the session model where the dispatch names
-none, so a whole review runs on Opus. Split it by what the axis needs.
-
-- **Opus.** Correctness, Claims, Standards, and Prior Round. Each one rules on unfamiliar code, and a
-  weaker model there returns a confident wrong finding.
-- **Sonnet.** Precedent, Comments, and Prose. Each one works from an explicit brief against bounded
-  input, so the brief carries the reasoning rather than the model.
-- **Haiku.** Checks. It runs the commands the repo declares and reports what came back, so it judges
-  nothing.
+**Set the model on every by-hand dispatch,** because an axis inherits the session model otherwise.
+The strongest model available for the axes that rule on unfamiliar code, a cheaper one for the axes
+an explicit brief drives, and the cheapest for Checks, which judges nothing. The workflow holds the
+same split per axis, in code.
 
 **Every by-hand prompt carries these parts.**
 

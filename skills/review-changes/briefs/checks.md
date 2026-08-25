@@ -23,3 +23,6 @@ Report a failure only, locally or on CI, and give each one three fields.
 3. Whether it failed locally, on CI, or both.
 
 Report any check you could not run, and name the setup it needed.
+
+Where everything passed, say `no failures`. Silence and a clean run read alike to whoever
+collects the axes, so an axis that returns nothing at all gets dispatched a second time.
