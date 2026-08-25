@@ -53,9 +53,8 @@ conclusions the user can relay, not commits nobody asked for.
 
 **2. Post once.**
 
-Accumulate findings in a scratch file under `/tmp`, never inside the work tree. Never post per file
-as the walk proceeds.
-Post the whole review in one pass at the end.
+Accumulate findings in the review directory, never in the work tree. Never post per file as the
+walk proceeds. Post the whole review in one pass at the end.
 
 One pass is not one call. A re-raise or a retraction is a reply on its own thread, per Step 4, and no
 thread reply can ride inside a review submission. Step 7 carries the order.
@@ -69,7 +68,7 @@ as a set of type errors. Post that as a standalone comment. Nothing else qualifi
 **3. Show the wording before it goes out. Every time.**
 
 Draft the review body and every comment. Show them inline. Ask before any call that writes to the
-PR, `gh pr review`, `gh pr comment` and `gh api` with a POST or a PATCH alike. This applies to
+PR, `post.sh --confirm`, `gh pr comment` and `gh api` with a POST or a PATCH alike. This applies to
 follow-up thread replies too. "Post it" authorizes the action, not the wording.
 
 **4. Never let another tool post or edit for you.**
@@ -117,6 +116,26 @@ Which artifact takes which mode.
 - **Flavored.** The discussion under a subject, and the review body. Contractions and some range read
   better there.
 
+## Keep the review in one directory under `/tmp`
+
+One directory per review, `/tmp/review-<n>/`, where `<n>` is the pull request number, or the branch
+name where no pull request exists. Replace every character outside `a-z`, `0-9` and `-` with a
+hyphen, so a branch name stays one directory. Name it in the session once, when Step 0 creates it.
+
+| File | Written by | Holds |
+|---|---|---|
+| `prior.json` | Step 0 | The prior review bodies and every inline thread |
+| `axes.md` | Step 3 | Each axis report, verbatim and unmerged |
+| `draft.md` | Step 5 | The review body, every comment with its anchor, and the verdict |
+| `payload.json` | Step 7 | The payload `post.sh` reads back and posts |
+
+`draft.md` is the one file that has to survive a compaction, because it alone reconstructs the
+review. Keep the other three out of it.
+
+**Why they stay apart:** a compacted session reads the draft back to finish Step 7. Raw thread JSON
+and eight axis reports in that same file cost context to re-read and carry nothing the draft has not
+already absorbed.
+
 ## Step 0. Resolve the target
 
 Resolve the target before reading any code. Use the first of these that applies.
@@ -163,8 +182,8 @@ it belongs in this context.
 > 1. `gh pr view <n> --json reviews` for the prior review bodies.
 > 2. `gh api repos/{owner}/{repo}/pulls/<n>/comments` for every inline thread.
 >
-> Write both results to the `/tmp` scratch file at <path>. Then report three things and nothing
-> else: whether any prior review exists, how many inline threads there are, and the path you wrote.
+> Write both results to `prior.json` at <path>. Then report three things and nothing else: whether
+> any prior review exists, how many inline threads there are, and the path you wrote.
 
 Run `gh api user --jq .login` yourself, because one line of output costs more to delegate than to
 fetch. The Prior Round axis needs it to tell your prior comments from another reviewer's.
@@ -256,7 +275,7 @@ to its own directory, so the dispatch carries one path.
 - **Prose.** `briefs/prose.md`
 - **Checks.** `briefs/checks.md`. Pass the pull request number.
 - **Prior Round.** `briefs/prior-round.md`. Dispatch only where Step 0 found prior rounds. Pass the
-  `/tmp` file holding the prior review bodies and the threads, and pass your own login.
+  `prior.json` path from Step 0, and pass your own login.
 
 Report the axes separately. Do not merge them, because one axis passing can hide another failing.
 Code can follow every standard and still implement the wrong thing.
@@ -264,6 +283,8 @@ Code can follow every standard and still implement the wrong thing.
 ## Step 3. Triage
 
 Reconcile what Step 2 returned. Do not re-run it.
+
+Write each axis report to `axes.md` before you triage, verbatim and unmerged.
 
 **Trust each axis on its own finding.** The subagent that ran the axis already did that
 verification. Repeating it in the main context refills the context that one axis per subagent kept
@@ -514,15 +535,25 @@ Cut any comment that only restates the diff. Collapse repeats, per Step 4. Lead 
 items. If more than about three findings block, say so at the top rather than making the reader
 count.
 
-### Write the draft to the scratch file
+### Write the draft to `draft.md`
 
-Append the draft to the `/tmp` scratch file once every comment is written. Rule 2 names that file,
-and this is the same one.
+Write the draft once every comment is written. The review body first, then one section per inline
+comment, in this shape.
 
-1. The review body.
-2. Each inline comment, with its path and line.
+```markdown
+## app/javascript/src/viewers/types/base.ts:45
+side: LEFT
+start_line: 43
 
-Name the path in the session on one line.
+suggestion (non-blocking): ...
+```
+
+The heading carries the path and the line. Add `side: LEFT` only for a comment on a deleted line,
+because the API defaults to `RIGHT`. Add `start_line` only for a multi-line anchor.
+
+**Why the fixed shape:** Step 7 copies those fields into the payload rather than re-reading them out
+of prose. A re-derived anchor is where a wrong line comes from, and a compacted context can still
+read this shape back.
 
 The write is not a post. Step 7 still shows the draft and waits for the go-ahead.
 
@@ -600,11 +631,11 @@ early verdict, and the reversal reads as indecision rather than as new evidence.
 Default to the lowest rung that holds. Rung 3 levies a re-review tax. Say what the tax buys, or do
 not levy it.
 
-Append the verdict to the scratch file once you pick it.
+Append the verdict to `draft.md` once you pick it.
 
 ## Step 7. Show, then post
 
-Show the review body and every comment from the scratch file. Wait for the go-ahead. That go-ahead
+Show the review body and every comment from `draft.md`. Wait for the go-ahead. That go-ahead
 covers the wording. The payload gets its own check below.
 
 **Head each comment with a link, not a bare path.**
@@ -616,7 +647,7 @@ covers the wording. The payload gets its own check below.
 Pin `<sha>` to the head commit so the link cannot drift while the user reads. The user opens the line
 in one click, which is what they do anyway to judge a comment.
 
-**Re-fetch immediately before `gh pr review`.** Nothing pauses the PR while you review it, and
+**Re-fetch immediately before you post.** Nothing pauses the PR while you review it, and
 nothing pauses it while you wait for the go-ahead. A long pass makes the Step 0 snapshot stale.
 Re-run the Step 0 prior-round commands, and add
 `gh pr view <n> --json state,reviewDecision,headRefOid`.
@@ -635,34 +666,40 @@ Reconcile the result against the drafted findings.
      re-check of the touched findings only, and posting as drafted.
 3. The PR merged or closed. Stop, and raise it with the user.
 
-Show the revised set and get a fresh go-ahead when anything changed. Update the scratch file to
-match, so it never disagrees with the set you showed. Post once.
+Show the revised set and get a fresh go-ahead when anything changed. Update `draft.md` to match, so
+it never disagrees with the set you showed. Post once.
 
-### Post the thread replies first, then the review
+### Write the payload, then read it back
 
-Each thread reply needs its own call, and none of them can be part of the review submission. Post
-them first. The review body counts the inline comments, re-raises included, so a body that lands
-ahead of its replies points the author at something they cannot find.
+`post.sh` carries the order of the writes, the one-call-per-endpoint rule, and the read-back. It
+reads back by default and writes only with `--confirm`.
 
-`gh pr review` takes a body and nothing else, so it cannot post an anchored inline comment. Reach for
-`gh api` instead.
+Write `payload.json` from `draft.md`. Every anchor copies across from a comment heading.
 
-1. One reply per prior thread:
-   `POST /repos/{owner}/{repo}/pulls/{n}/comments/{comment_id}/replies`.
-2. The review, body and every inline comment in one call:
-   `POST /repos/{owner}/{repo}/pulls/{n}/reviews`, with `event`, `body`, and a `comments` array of
-   `path`, `line`, optional `start_line`, `side`, and `body`.
+```json
+{
+  "repo": "<owner>/<name>",
+  "pr": <n>,
+  "replies": [ { "comment_id": <id>, "body": "..." } ],
+  "review": {
+    "event": "APPROVE",
+    "body": "...",
+    "comments": [ { "path": "...", "line": <n>, "start_line": <n>, "side": "RIGHT", "body": "..." } ]
+  }
+}
+```
 
-Pass the payload as a file with `--input`, because a comment body carries backticks and pipes that do
-not survive a shell argument. Write that file from the `/tmp` scratch file.
+`replies` takes one entry per prior thread you answer, and the key can be absent. `start_line` and
+`side` are optional on a comment. `event` takes `APPROVE`, `REQUEST_CHANGES` or `COMMENT`.
 
-### Read the payload back as raw text
+The script refuses a payload before it writes, on `repo`, `pr`, `review.event` and `review.body`,
+and on a reply missing its `comment_id`. GitHub validates every other field, and names the one it
+rejects.
 
-Assemble the file, then print it back through the shell and show that output.
+Read the payload back and show that output.
 
 ```sh
-jq -r '"--- body ---", .body,
-       (.comments[] | "--- \(.path) \(.start_line // .line):\(.line) ---", .body)' <payload>
+${CLAUDE_PLUGIN_ROOT}/skills/review-changes/scripts/post.sh /tmp/review-<n>/payload.json
 ```
 
 Those bytes are what the author reads, anchors included. The final go-ahead attaches to them, not to
@@ -676,11 +713,21 @@ in a message shows you the same rendering that hid the problem the first time.
 This checks fidelity, not correctness. It confirms that what ships is what the user approved, and it
 catches a dropped comment or a wrong anchor. It says nothing about whether a finding is right.
 
-### Shape each write as one call
+### Post with `--confirm`
 
-One endpoint per Bash call, with an absolute path to the payload file.
+One command, once the user approves those bytes.
 
-**When a write is denied, stop.** Do not reshape the command and retry, because retrying a denied
+```sh
+${CLAUDE_PLUGIN_ROOT}/skills/review-changes/scripts/post.sh /tmp/review-<n>/payload.json --confirm
+```
+
+It posts one reply per prior thread first, then the review in one call. The review body counts the
+inline comments, re-raises included, so a body that lands ahead of its replies points the author at
+something they cannot find.
+
+**Never hand-roll the calls.** `gh pr review` takes a body and nothing else, so it cannot anchor an
+inline comment. A `gh api` you build yourself skips the read-back.
+
+**When the write is denied, stop.** Do not reshape the command and retry, because retrying a denied
 write is the thing the denial asks you not to do. Show the user the exact command and let them run
 it. Nothing is lost: the wording is approved and the payload is already read back.
-
