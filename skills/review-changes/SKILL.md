@@ -69,7 +69,7 @@ as a set of type errors. Post that as a standalone comment. Nothing else qualifi
 **3. Show the wording before it goes out. Every time.**
 
 Draft the review body and every comment. Show them inline. Ask before any call that writes to the
-PR, `gh pr review`, `gh pr comment` and `gh api` with a POST or a PATCH alike. This applies to
+PR, `post.sh --post`, `gh pr comment` and `gh api` with a POST or a PATCH alike. This applies to
 follow-up thread replies too. "Post it" authorizes the action, not the wording.
 
 **4. Never let another tool post or edit for you.**
@@ -616,7 +616,7 @@ covers the wording. The payload gets its own check below.
 Pin `<sha>` to the head commit so the link cannot drift while the user reads. The user opens the line
 in one click, which is what they do anyway to judge a comment.
 
-**Re-fetch immediately before `gh pr review`.** Nothing pauses the PR while you review it, and
+**Re-fetch immediately before you post.** Nothing pauses the PR while you review it, and
 nothing pauses it while you wait for the go-ahead. A long pass makes the Step 0 snapshot stale.
 Re-run the Step 0 prior-round commands, and add
 `gh pr view <n> --json state,reviewDecision,headRefOid`.
@@ -638,31 +638,34 @@ Reconcile the result against the drafted findings.
 Show the revised set and get a fresh go-ahead when anything changed. Update the scratch file to
 match, so it never disagrees with the set you showed. Post once.
 
-### Post the thread replies first, then the review
+### Write the payload, then read it back
 
-Each thread reply needs its own call, and none of them can be part of the review submission. Post
-them first. The review body counts the inline comments, re-raises included, so a body that lands
-ahead of its replies points the author at something they cannot find.
+`post.sh` carries the order of the writes, the one-call-per-endpoint rule, and the read-back. It
+reads back by default and writes only with `--post`.
 
-`gh pr review` takes a body and nothing else, so it cannot post an anchored inline comment. Reach for
-`gh api` instead.
+Write the payload from the `/tmp` scratch file, to a second path under `/tmp`.
 
-1. One reply per prior thread:
-   `POST /repos/{owner}/{repo}/pulls/{n}/comments/{comment_id}/replies`.
-2. The review, body and every inline comment in one call:
-   `POST /repos/{owner}/{repo}/pulls/{n}/reviews`, with `event`, `body`, and a `comments` array of
-   `path`, `line`, optional `start_line`, `side`, and `body`.
+```json
+{
+  "repo": "<owner>/<name>",
+  "pr": <n>,
+  "replies": [ { "comment_id": <id>, "body": "..." } ],
+  "review": {
+    "event": "APPROVE",
+    "body": "...",
+    "comments": [ { "path": "...", "line": <n>, "start_line": <n>, "side": "RIGHT", "body": "..." } ]
+  }
+}
+```
 
-Pass the payload as a file with `--input`, because a comment body carries backticks and pipes that do
-not survive a shell argument. Write that file from the `/tmp` scratch file.
+`replies` takes one entry per prior thread you answer, and the key can be absent. `start_line` and
+`side` are optional on a comment. `event` takes `APPROVE`, `REQUEST_CHANGES` or `COMMENT`. The script
+refuses a payload missing anything else, before it writes.
 
-### Read the payload back as raw text
-
-Assemble the file, then print it back through the shell and show that output.
+Read the payload back and show that output.
 
 ```sh
-jq -r '"--- body ---", .body,
-       (.comments[] | "--- \(.path) \(.start_line // .line):\(.line) ---", .body)' <payload>
+${CLAUDE_PLUGIN_ROOT}/skills/review-changes/scripts/post.sh /tmp/<payload>.json
 ```
 
 Those bytes are what the author reads, anchors included. The final go-ahead attaches to them, not to
@@ -676,11 +679,21 @@ in a message shows you the same rendering that hid the problem the first time.
 This checks fidelity, not correctness. It confirms that what ships is what the user approved, and it
 catches a dropped comment or a wrong anchor. It says nothing about whether a finding is right.
 
-### Shape each write as one call
+### Post with `--post`
 
-One endpoint per Bash call, with an absolute path to the payload file.
+One command, once the user approves those bytes.
 
-**When a write is denied, stop.** Do not reshape the command and retry, because retrying a denied
+```sh
+${CLAUDE_PLUGIN_ROOT}/skills/review-changes/scripts/post.sh /tmp/<payload>.json --post
+```
+
+It posts one reply per prior thread first, then the review in one call. The review body counts the
+inline comments, re-raises included, so a body that lands ahead of its replies points the author at
+something they cannot find.
+
+**Never hand-roll the calls.** `gh pr review` takes a body and nothing else, so it cannot anchor an
+inline comment. A `gh api` you build yourself skips the read-back.
+
+**When the write is denied, stop.** Do not reshape the command and retry, because retrying a denied
 write is the thing the denial asks you not to do. Show the user the exact command and let them run
 it. Nothing is lost: the wording is approved and the payload is already read back.
-
