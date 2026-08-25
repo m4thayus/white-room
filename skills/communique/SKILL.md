@@ -25,11 +25,34 @@ and once sent they re-ping and cannot be cleanly unsent.
 
 ## Tag the first mention
 
-Use the platform's mention syntax the first time you name someone, so they get alerted. Every
-later mention in the same message is the bare name.
+Use the platform's mention syntax the first time you name someone. Every later mention in the same
+message is the bare name.
 
-- GitHub: `@handle`
-- Slack: `<@U01ABCDEF>`, which renders as their display name
+**A message that opens a topic cold gets the tag.** No prior thread, nothing the recipient already
+tracks — the tag marks where the new thing starts. A DM opens cold like anything else, so it gets
+the tag too.
+
+Time sensitivity is a separate signal. A cold open earns the tag whether or not the ask has a
+deadline.
+
+Every platform with a mention syntax follows the same rule. These are the ones this session
+reaches.
+
+| Platform | First mention |
+|---|---|
+| GitHub | `@handle` |
+| Linear | `@handle` |
+| Slack | `<@U01ABCDEF>`, which renders as their display name |
+
+Slack also broadcasts to a whole channel, and this is where time sensitivity gets said out loud.
+
+| Broadcast | Reaches | Connotes |
+|---|---|---|
+| `<!here>` | members currently active | act on this today |
+| `<!channel>` | every member, active or not | the channel is blocked until someone does |
+
+A broadcast never replaces the tag on the person who owns the ask. Name them too, or nobody
+owns it.
 
 Look up handles and IDs wherever this project keeps them — agent memory, a contributors file, a
 team roster in the docs. Ask rather than guess an ID, because a wrong ID pings the wrong person.
