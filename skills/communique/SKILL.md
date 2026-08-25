@@ -1,22 +1,26 @@
 ---
 name: communique
-description: Use before any text leaves this session for a human other than Matt — a Slack message or DM, a PR review body or comment, an issue body, a commit message someone else reads. Covers drafting the wording, showing it to Matt before it sends, writing for a recipient who has none of this session's context, and repairing something already sent. Triggers on "send this", "post it", "reply to them", "comment on the PR", "request changes", "DM them", "write the commit message", and any gh pr review, gh pr comment or Slack send.
+description: Use before any text leaves this session for a human other than the user — a Slack message or DM, a PR review body or comment, an issue body, a commit message someone else reads. Covers drafting the wording, showing it to the user before it sends, writing for a recipient who has none of this session's context, and repairing something already sent. Triggers on "send this", "post it", "reply to them", "comment on the PR", "request changes", "DM them", "write the commit message", and any gh pr review, gh pr comment or Slack send.
 ---
+
+<!-- Sync: user or project instructions invoke this skill by name, as `white-room:communique`.
+     Renaming the skill or the plugin breaks every one of those invocations, and nothing here
+     catches it. The other end is whatever CLAUDE.md or AGENTS.md names the skill. -->
 
 # Communique
 
-Anything leaving this session for a human other than Matt. Slack messages and DMs, PR review
+Anything leaving this session for a human other than the user. Slack messages and DMs, PR review
 bodies and comments, issue bodies, commit messages others will read.
 
 ## Show the wording before it goes out
 
-Draft the body, show it inline, and ask — even when Matt has already said "post it", "send it"
+Draft the body, show it inline, and ask — even when the user has already said "post it", "send it"
 or "request changes".
 
 **The instruction authorizes the action, not the wording.** "Put together our findings and
 request changes" means assemble and be ready. It does not mean fire.
 
-**Why:** these go to real people. Tone and framing are the part Matt most wants final say on,
+**Why:** these go to real people. Tone and framing are the part the user most wants final say on,
 and once sent they re-ping and cannot be cleanly unsent.
 
 ## Tag the first mention
@@ -27,7 +31,8 @@ later mention in the same message is the bare name.
 - GitHub: `@handle`
 - Slack: `<@U01ABCDEF>`, which renders as their display name
 
-Handles and Slack IDs live in the `mercury` memory scope.
+Look up handles and IDs wherever this project keeps them — agent memory, a contributors file, a
+team roster in the docs. Ask rather than guess an ID, because a wrong ID pings the wrong person.
 
 ## If it already went out
 
@@ -44,7 +49,7 @@ said it themselves — everything discussed in this session is invisible to them
 
 Two consequences:
 
-1. Never retract or amend something they never received. A draft shown only to Matt does not
+1. Never retract or amend something they never received. A draft shown only to the user does not
    exist to them.
 2. Never drop in a detail that surfaced in side discussion without introducing it fresh.
 
@@ -55,13 +60,13 @@ stated as new, with its why, or gets cut.
 never got, or assuming they forgot something. On a long-running review that is actively
 corrosive, because each round then has both sides working from information the other lacks.
 
-## Matt's edits to a draft are proposals, not copy to transcribe
+## The user's edits to a draft are proposals, not copy to transcribe
 
-When Matt responds to draft wording he is reacting to the substance and steering it. Take each
-note as a constraint or a correction. Reconcile it against the rest of the message, drop what it
-makes redundant, and rewrite.
+When the user responds to draft wording they are reacting to the substance and steering it. Take
+each note as a constraint or a correction. Reconcile it against the rest of the message, drop what
+it makes redundant, and rewrite.
 
-**Why:** pasting spoken notes straight through produces a worse message than either of us would
+**Why:** pasting spoken notes straight through produces a worse message than either of you would
 write. It abandons judgment exactly where judgment matters — what to include, what a colleague
 can act on, what needs no saying.
 
@@ -76,12 +81,11 @@ Conventional Commits, in every repo.
 - **Scope** is lowercase and names the area — `claude`, `tmux`, `viewer`, `auth`. Omit it when
   the change is repo-wide.
 - **Subject** is lowercase and imperative, with no trailing period.
-- **Mercury repos append the Linear ref** where one exists: `fix(export): drop the duplicate
-  header row from CSV output (ENG-1234)`. GitHub adds the PR number on squash merge, so never
-  write that yourself.
+- **Append the issue ref where the project does.** Read the recent log first, and match it:
+  `fix(export): drop the duplicate header row from CSV output (ENG-1234)`. GitHub adds the PR
+  number on squash merge, so never write that yourself.
 
 ## Two habits to drop on the way through
 
 1. Preemptively absolving the recipient. "So you applied the rule correctly", "that's not on you".
 2. Reaching for a specific example when a general statement is what was asked for.
-```
