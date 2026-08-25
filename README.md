@@ -1,6 +1,8 @@
-# white-room
+# The White Room
+*A construct for my Claude Code skills*
 
-> I know kung fu.
+> I know kung fu.<br />
+> — Neo
 
 Personal Claude Code skills. Each one grants a capability by taking options away.
 
