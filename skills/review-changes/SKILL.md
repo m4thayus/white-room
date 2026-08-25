@@ -226,10 +226,9 @@ none, so a whole review runs on Opus. Split it by what the axis needs.
 **Every subagent prompt carries these parts.**
 
 1. The diff command and the commit list from Step 0.
-2. The absolute path to every reference file the axis names, resolved from this skill's base
-   directory. A subagent never sees this file, so a relative path reaches nothing.
-3. The axis brief below, verbatim.
-4. **Where Step 0 found a sibling-repo dependency:** the repo, the PR number, and the SHA to read.
+2. The absolute path to the axis brief, resolved from this skill's base directory. A subagent never
+   sees this file, so a relative path reaches nothing.
+3. **Where Step 0 found a sibling-repo dependency:** the repo, the PR number, and the SHA to read.
    State that the default branch is not the source.
 
 ### Pick the axis set
@@ -249,172 +248,19 @@ say costs one `no findings` line.
 
 ### The axis briefs
 
-**Correctness.**
+Each brief is a file. Pass its absolute path and require the agent to follow it verbatim, rather
+than pasting the text into the prompt. A brief that needs a reference file names it itself, relative
+to its own directory, so the dispatch carries one path.
 
-> Report bugs, wrong behavior, missing cases, swallowed errors, and unhandled state in this diff.
-> Read the code around a changed hunk before you judge the hunk.
-
-**Claims.** Paste the claims you collected in Step 1.
-
-> Report requirements in these claims that the diff misses or half-implements, behavior nobody asked
-> for, and claims the code contradicts. Quote the claim in each finding. Where a claim and the code
-> disagree, say which of the two is wrong.
-
-**Standards.** Pass `references/smells.md`.
-
-> Read the diff first as someone fluent in its language and its framework. Ask whether the standard
-> library, the framework, or a dependency the repo already loads does what this code hand-rolls.
-> Report a hand-rolled equivalent of a built-in, a house pattern the code sidesteps, and a call whose
-> name overstates what it does.
->
-> Verify the equivalence before you report it. Run both against the edge cases, and name the cases
-> you ran. A built-in that is nearly equivalent is a different finding from one that is equivalent.
->
-> No reference lists this, because fluency is the whole documented surface of a language and its
-> framework rather than a rule set.
->
-> Then apply the smells reference to this diff. Invoke whatever coding-standards skills this project
-> exposes for the languages the diff touches, and do not restate their rules. Your available-skills
-> list names them, so match them to the changed file kinds yourself.
->
-> Sweep history before you rule on "this repo has a better way". Run `git log -S<symbol> --all` and
-> `git log --grep=<term>`, then `git show` each commit they return. A pattern the repo tried and
-> retired is invisible to a working-tree grep, and it is the answer to whether the house way is the
-> house way.
-
-**Precedent.**
-
-> Report what the repo already does, what it once did, and what it has never done. Run two sweeps.
->
-> 1. **No prior art.** What does this diff introduce that the repo has nothing like? A file kind, a
->    directory, a layer, a naming shape, an export pattern, a dependency.
-> 2. **Prior art.** What does this diff do that the repo already does elsewhere? Name the other
->    sites.
->
-> **Search history, not just the working tree.** Each sweep runs `git log -S<symbol> --all` and
-> `git log --grep=<term>`, then `git show` on every commit they return. A working-tree grep alone is
-> a wrong answer, because a pattern the repo used four times and retired four times reads as "never
-> done" to it. Report a retired pattern as prior art, and say it was retired.
->
-> A search that returns only the new file is the finding. Say which searches you ran to earn it,
-> history included.
->
-> Report prior art as fact, and do not rule on it. Prior art makes a thing precedented. It does not
-> make the thing right, and its absence does not make a thing wrong.
->
-> This axis reports observations rather than defects, so the finding contract does not apply. Each
-> row carries three fields.
->
-> 1. The thing, as the diff introduces it or repeats it.
-> 2. The search you ran, so the reader can judge it.
-> 3. What the search returned.
-
-**Comments.** Pass `references/style.md`.
-
-> Sweep every comment this diff adds or changes. Report six things.
->
-> 1. **A comment the code should have made unnecessary.** Code trumps a comment. Where a rename, a
->    restructure, or a split would remove the need for the comment, report that change instead. Often
->    the honest fix is the name.
-> 2. **Historical narration.** A comment states the rule the code follows now. It does not narrate
->    the change that produced it. Signature phrases to grep for: "now applies", "under the old",
->    "was harmless but", "used to".
-> 3. **One fact, one home.** A comment restating what another comment already owns should be a
->    pointer to that owner instead.
-> 4. **Verbosity.** A paragraph where one sentence carries the rule.
-> 5. **A header that re-explains its section.** Prefer one rationale attached to the rule it
->    justifies.
-> 6. **Style.** Apply the style reference in flavored mode. A changed comment takes the same
->    structural rules as a review comment, because the next maintainer reads it the same way.
->
-> Configuration takes a lighter pass. A setting's wording is frequently opaque on its own terms, and
-> its *why* is rarely derivable from the value, so a comment there earns its place more easily. Still
-> read it. Report one that is genuinely redundant or bloated, and do not go hunting for one.
->
-> The exception to one fact, one home is the sync comment. Sometimes this code silently depends on
-> code elsewhere: a wire format, a shared schema, an ordering both ends assume, a constant another
-> service parses. Then the comment belongs at both ends, and each copy names the other. The other
-> end may be another file, another package, or another repo. Test it: could someone editing *this*
-> code break the invariant without ever opening the other one? Yes means replicate the fact. No
-> means make it a pointer.
->
-> This audit is not cosmetic. Reading the comments closely is how a missing code finding surfaces.
-> Treat any comment that does not match what the code does as a correctness lead.
-
-**Prose.** Pass `references/style.md`.
-
-> Check the changed prose two ways, not one.
->
-> First, style. Check the changed prose against the style reference, and name the mode each changed
-> file falls under. A violation in a file that sets the rule itself is the strongest form of this
-> finding.
->
-> Second, accuracy. Check every claim the prose makes against the code. A rewritten justification is
-> a claim, not decoration. This check finds factual errors, so never treat the pass as style alone.
-
-**Checks.** Pass the pull request number.
-
-> Run every kind of check this repo declares, not the one nearest the diff: the spec suite, the
-> linter, the typechecker, and the build. Narrowing a suite to the paths the diff touches is fine.
-> Skipping a whole kind of check is not.
->
-> Take each command from the repo, not from habit. The CI workflow, the git hooks and the package
-> scripts already declare how this project runs its checks. An invocation you compose yourself can
-> cover less ground than the declared one and still exit zero, which reads as green over the gap.
->
-> Where the repo declares several commands for one kind of check, run all of them. A split
-> configuration usually exists because one target excludes what another covers.
->
-> Run `gh pr checks <n>` as well. The local run and the CI status are both checks, and neither
-> replaces the other. A local run catches a check the CI config never runs. CI catches a failure in
-> an environment you do not have.
->
-> This axis reports process results rather than defects, so the finding contract does not apply.
-> Report a failure only, locally or on CI, and give each one three fields.
->
-> 1. The command, as the repo declares it.
-> 2. The failing target, named closely enough to comment on the line.
-> 3. Whether it failed locally, on CI, or both.
->
-> Report any check you could not run, and name the setup it needed.
-
-**Prior Round.** Dispatch only where Step 0 found prior rounds. Pass the `/tmp` file holding the
-prior review bodies and the threads, and pass your own login.
-
-> Report one disposition for every prior thread. Run three checks.
->
-> 1. **Every reply that claims a fix.** Verify it against the current code. A reply is a claim, and a
->    claimed fix the code does not show is the strongest finding a later round produces.
-> 2. **Every prior comment of ours.** Ask whether it is still correct, given what the diff now shows.
->    A prior comment that was wrong needs a retraction, and no other axis looks for one.
-> 3. **Every other reviewer's position.** Report it as data. Do not adjudicate it, because the user
->    decides where two reviewers disagree.
->
-> Read every thread. Do not sample.
->
-> This axis reports dispositions rather than defects, so the finding contract does not apply. Each
-> row carries four fields.
->
-> 1. The thread.
-> 2. How hard the prior comment asked: **blocking**, **optional**, or **trivial**. Judge it from the
->    wording where the comment carries no marker, because reviewers write in their own conventions.
-> 3. The disposition, from the list below.
-> 4. The evidence.
->
-> The dispositions.
->
-> - Fixed as asked.
-> - Claimed fixed, and the code does not show it.
-> - Fixed differently, and it works.
-> - Fixed differently, and it breaks something else.
-> - Our prior comment was wrong.
-> - The author pushed back and did not change it.
-> - Another reviewer contradicts our prior comment.
-> - Another reviewer agrees with our prior comment.
-> - Ignored in silence, meaning no reply and no change.
->
-> Say what each disposition rests on. Where an alternative fix reads better than the one we asked
-> for, say so. Where two dispositions both fit, name both and say which you lean to.
+- **Correctness.** `briefs/correctness.md`
+- **Claims.** `briefs/claims.md`. Paste the claims you collected in Step 1.
+- **Standards.** `briefs/standards.md`
+- **Precedent.** `briefs/precedent.md`
+- **Comments.** `briefs/comments.md`
+- **Prose.** `briefs/prose.md`
+- **Checks.** `briefs/checks.md`. Pass the pull request number.
+- **Prior Round.** `briefs/prior-round.md`. Dispatch only where Step 0 found prior rounds. Pass the
+  `/tmp` file holding the prior review bodies and the threads, and pass your own login.
 
 Report the axes separately. Do not merge them, because one axis passing can hide another failing.
 Code can follow every standard and still implement the wrong thing.
