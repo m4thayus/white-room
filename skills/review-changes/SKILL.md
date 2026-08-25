@@ -205,6 +205,14 @@ None of the three anchors to a line of code, so all three belong in the review b
 One axis per subagent, so no axis sees another's reasoning. Deciding early that a change is "just" a
 rename is how the design-level findings get skipped.
 
+**Dispatch every axis as the `review-axis` agent, except Checks.** The agent carries what all of them
+share — notes only, the five-field finding contract, and the requirement to report a clean pass in
+words. A dispatch restates none of the three.
+
+**Checks stays on `general-purpose`,** because it runs the repo's suites and `review-axis` cannot
+write. Its brief carries its own output shape, and its dispatch asks for `no failures` where
+everything passes.
+
 **Set the model on every dispatch.** An axis inherits the session model where the dispatch names
 none, so a whole review runs on Opus. Split it by what the axis needs.
 
@@ -221,23 +229,8 @@ none, so a whole review runs on Opus. Split it by what the axis needs.
 2. The absolute path to every reference file the axis names, resolved from this skill's base
    directory. A subagent never sees this file, so a relative path reaches nothing.
 3. The axis brief below, verbatim.
-4. The finding contract below. Precedent and Prior Round are the exceptions, because each brief
-   carries its own output shape.
-5. **Where Step 0 found a sibling-repo dependency:** the repo, the PR number, and the SHA to read.
+4. **Where Step 0 found a sibling-repo dependency:** the repo, the PR number, and the SHA to read.
    State that the default branch is not the source.
-
-**The finding contract.** Give every subagent these words: report findings only, under 400 words,
-and no prose summary. Every finding carries five fields.
-
-1. File and line.
-2. One sentence naming the defect.
-3. A concrete failure scenario. Specific inputs or state, then the wrong output or crash.
-4. Confidence, as `confirmed` or `plausible`.
-5. Whether main already does the same thing elsewhere.
-
-**A clean axis reports an explicit negative.** Require the words its brief names: `no findings` for
-most, `no failures` for Checks. Silence and a clean pass read alike in the main context, so an axis
-that returned nothing at all has to be dispatched again.
 
 ### Pick the axis set
 
