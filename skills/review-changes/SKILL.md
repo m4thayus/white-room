@@ -37,30 +37,26 @@ session instead, because the author has no use for it and no context for it.
 
 **1. Notes-only. Produce findings. Do not edit.**
 
-Run no Edit, no Write, and no `git mv` during a review. An imperative-sounding phrase during a review
+Run no Edit, no Write, and no `git mv` during a review, because a review produces the conclusions the
+user can relay, not commits nobody asked for. An imperative-sounding phrase during a review
 describes the work. It does not authorize the work. "Just do the crate shifting" characterizes a
 change as mechanical. Only "make the change", or a clear equivalent, authorizes one.
 
 Detect whose branch it is before any edit. Run `git log <base>..HEAD --format='%an'`. If any name
-other than the user's appears, the branch is someone else's. Stay in review mode until told
-otherwise. A branch the user pushed one commit to is still not the user's branch.
+other than the user's appears, the branch is someone else's, and editing it steps on their work.
+Stay in review mode until told otherwise. A branch the user pushed one commit to is still not the user's branch.
 
 Self-review does not relax this rule on its own. Produce the findings first. Applying them is a
 separate step the user asks for.
 
-**Why:** editing another person's branch steps on their work. The value of a review is the
-conclusions the user can relay, not commits nobody asked for.
-
 **2. Post once.**
 
-Accumulate findings in the review directory, never in the work tree. Never post per file as the
-walk proceeds. Post the whole review in one pass at the end.
+Accumulate findings in the review directory, never in the work tree. Never post per file as the walk
+proceeds, because piecemeal comments re-ping the author on every push and lose the framing one
+considered pass gives. Post the whole review in one pass at the end.
 
 One pass is not one call. A re-raise or a retraction is a reply on its own thread, per Step 4, and no
 thread reply can ride inside a review submission. Step 7 carries the order.
-
-**Why:** piecemeal comments fragment the review. They re-ping the author on every push. They lose
-the big-picture framing that makes one considered pass readable.
 
 One exception: a batch of self-contained non-blocking cleanup the author can clear in parallel, such
 as a set of type errors. Post that as a standalone comment. Nothing else qualifies.
@@ -89,11 +85,11 @@ Raise these in the session. Never write them into the draft.
    picking one.
 4. **A prior round needs a call you do not own.** The author pushed back and did not change the
    code, or another reviewer contradicts one of your prior comments. See the routing table in
-   Step 3.
+   `references/routing.md`.
 5. **The diff introduces a pattern the repo has no prior art for, and no rule covers it.** Whether
-   the team agreed to it is not answerable from the repo. See Step 3.
+   the team agreed to it is not answerable from the repo. See `references/routing.md`.
 6. **This is the third round on the same PR.** The rounds have stopped being about mechanics. See
-   Step 6.
+   `references/verdict.md`.
 
 **Report the conflicts you did settle.** Give each cross-axis contradiction one line in the session,
 with the call you made. Never resolve one silently. Keep it brief and let the user ask for the detail.
@@ -132,10 +128,6 @@ hyphen, so a branch name stays one directory. Name it in the session once, when 
 `draft.md` is the one file that has to survive a compaction, because it alone reconstructs the
 review. Keep the other three out of it.
 
-**Why they stay apart:** a compacted session reads the draft back to finish Step 7. Raw thread JSON
-and eight axis reports in that same file cost context to re-read and carry nothing the draft has not
-already absorbed.
-
 ## Step 0. Resolve the target
 
 Resolve the target before reading any code. Use the first of these that applies.
@@ -147,9 +139,7 @@ Resolve the target before reading any code. Use the first of these that applies.
 4. Ambiguous, or not a git repo. Ask. Do not guess a target.
 
 **Check out the target before anything else reads it.** The axes verify by executing, not by reading
-alone. Checks runs the suites the repo declares. Standards runs a built-in against the edge cases.
-Claims runs the one case behind an author's assertion. All of it reads the working tree, so the tree
-has to hold the code under review.
+alone. They read the working tree, so the tree has to hold the code under review.
 
 **A dirty tree stops the review.** Name what is uncommitted and ask. Never stash, and never check
 out over uncommitted work. This holds for a self-review too. Uncommitted work is not reviewable,
@@ -221,8 +211,7 @@ None of the three anchors to a line of code, so all three belong in the review b
 
 ## Step 2. Dispatch the axes
 
-One axis per subagent, so no axis sees another's reasoning. Deciding early that a change is "just" a
-rename is how the design-level findings get skipped.
+One axis per subagent, so no axis sees another's reasoning.
 
 **Dispatch through the `white-room:review` workflow.** Pass it `{skillDir, diff, commits, axes,
 sibling}`, where `skillDir` is this skill's absolute base directory and each axis entry is
@@ -235,8 +224,7 @@ write. Send that one to `general-purpose`.
 
 **Set the model on every by-hand dispatch,** because an axis inherits the session model otherwise.
 The strongest model available for the axes that rule on unfamiliar code, a cheaper one for the axes
-an explicit brief drives, and the cheapest for Checks, which judges nothing. The workflow holds the
-same split per axis, in code.
+an explicit brief drives, and the cheapest for Checks, which judges nothing.
 
 **Every by-hand prompt carries these parts.**
 
@@ -291,8 +279,8 @@ verification. Repeating it in the main context refills the context that one axis
 clear.
 
 **Own the recommendation.** That part is yours, not the subagent's. Check every proposed fix against
-Step 5 before it becomes a comment. Watch for the retired symptom: a fix that resolves the visible
-failure one level above where the cause lives.
+`references/conventional.md` before it becomes a comment. Watch for the retired symptom: a fix that
+resolves the visible failure one level above where the cause lives.
 
 **Two axes disagreeing is the one trigger for reading the code yourself.** When axes contradict each
 other on the same lines, or one axis's fix would create another axis's finding, open that hunk and
@@ -305,7 +293,8 @@ happen is theoretical.
 **Precedent, Prior Round and Checks are exempt from that rule, for two different reasons.** An
 observation and a disposition are not defects, so no failure scenario attaches to either. A check
 failure is the opposite case. It already happened, so the run is its failure scenario and nothing
-about it is theoretical. Route all three below.
+about it is theoretical. Route Checks below, and route Precedent and Prior Round through
+`references/routing.md`.
 
 For each surviving finding, ask these four questions.
 
@@ -324,59 +313,22 @@ structural guarantee.
 The loop itself signals that both findings are probably theoretical. Triage them rather than
 oscillating.
 
-**Use what Precedent reported.** It decides who owns a fix, and what a finding covers. It never
-decides whether a finding is real, or how severe it is.
-
-| What Precedent found | Destination |
-|---|---|
-| No prior art, and no rule against it | session, because "was this agreed?" is not answerable from the repo |
-| No prior art, and a rule against it | inline comment, citing the rule |
-| Prior art, and an axis flagged it | inline comment, naming where else the pattern appears |
-
-A bug main also has is the same bug. Prior art changes what the comment says, not what it asks for.
-Say that the pattern predates this diff, and that the fix reaches past it.
-
-Ask what a finding actually is before you reach for prior art. A finding rewritten around the points
-that survive it is frequently the wrong finding.
+`references/routing.md` carries the destination tables for a Precedent observation and for a Prior
+Round disposition. Read it per finding.
 
 **Route the Checks rows.** Every failure is blocking, and it goes near the top of the review body.
 Where the failing target points at a line, add an inline comment for the detail as well. Where the
 axis could not run a check, say so in the session, and name the CI result you fell back on.
-
-**Route the Prior Round rows.** The axis reports what it saw, and it does not choose a destination.
-
-| Disposition | Destination |
-|---|---|
-| Fixed as asked | nowhere |
-| Claimed fixed, and the code does not show it | re-raise |
-| Fixed differently, and it works | nowhere, unless the alternative is worth naming |
-| Fixed differently, and it breaks something else | re-raise |
-| Our prior comment was wrong | retract |
-| The author pushed back and did not change it | session |
-| Another reviewer contradicts our prior comment | session |
-| Another reviewer agrees with our prior comment | nowhere |
-| Ignored in silence | how hard we asked decides, below |
-
-**Ignored in silence.** How hard the prior comment asked decides. A non-blocking ask left the change
-optional, so re-raising it removes the option.
-
-| How hard we asked | The label, where the comment was ours | Destination |
-|---|---|---|
-| Blocking | `issue:`, `suggestion: (blocking)` | re-raise |
-| Optional | `suggestion:` | one line, non-blocking |
-| Trivial | `suggestion: (if-minor)`, `nitpick:`, `thought:` | drop, and note it in the session |
 
 **Reconcile this round against the other reviewers.** Prior Round reported their positions, so check
 every finding you are keeping against them. A finding that contradicts a position goes to the
 session, not the draft. A finding another reviewer already made gets cut, or shrinks to one line
 agreeing with theirs.
 
-**Calibrate the confidence you write.** State the observation and the reasoning. Do not dress
+**Calibrate the confidence you write,** because confident phrasing on a shaky finding costs the
+author a full context reload to disprove. State the observation and the reasoning. Do not dress
 uncertainty as a ruling. A finding you are 60% on must read as 60%. Separate "this is wrong" from
 "this looks off, check me".
-
-**Why:** confident phrasing on a shaky finding costs the author a full context reload to disprove.
-That is the same re-review cost the verdict rule exists to minimize.
 
 ## Step 4. Group the findings, then place them
 
@@ -403,11 +355,10 @@ while assembling the payload.
 wrong, that is an ordinary inline comment. Where the code is right and the claim is wrong, the defect
 is a sentence in the description, so it goes in the review body with the metadata findings.
 
-Lead that one with the claim. Quote it, say what verification found, and name the fix as correcting
-the description. Code detail goes underneath as evidence.
-
-**Why:** leading with the code analysis reads as "your change is broken". The author defends an
-implementation that was never in question, and a one-sentence documentation fix costs a round-trip.
+Lead that one with the claim, because leading with the code analysis reads as "your change is
+broken" and sends the author to defend an implementation that was never in question. Quote it, say
+what verification found, and name the fix as correcting the description. Code detail goes underneath
+as evidence.
 
 **A re-raise or a retraction is a reply on the original thread.** The thread carries the history a
 fresh comment would orphan. Where the thread takes no reply, because it is resolved or outdated or
@@ -424,7 +375,7 @@ the prior comment was a prior review body, post one PR-level comment instead and
    you read the whole diff and found nothing to change, and name every axis that came back with no
    findings.
 5. **Where Step 1's metadata pass found something:** each metadata finding, one line each, labelled
-   from the Step 5 list.
+   from the list in `references/conventional.md`.
 
 Do not rank the axis findings in the review body, and do not name a worst one. The inline comments
 carry that.
@@ -443,97 +394,8 @@ confusion. Name the comments it refers to, or cut the sentence.
 
 ## Step 5. Write each comment
 
-Use the [Conventional Comments](https://conventionalcomments.org/) format.
-
-```
-<label> [decoration]: <subject>
-
-<discussion>
-```
-
-The subject is one short line carrying the ask and nothing else. Reasoning, context, and next steps
-go below the blank line.
-
-**Why:** a label followed by one undifferentiated blob is the same comment with a prefix bolted on.
-
-Labels, and the distinction each one carries:
-
-- `issue:` A specific problem with the code. Blocking unless it says otherwise.
-- `suggestion:` An improvement to the code. Name the replacement, not just the objection. Add
-  `(blocking)` when the change is necessary rather than optional.
-- `question:` A potential concern you genuinely do not know the answer to. Never a rhetorical device
-  for an objection you have already formed.
-- `nitpick:` Trivial and preference-based. Always non-blocking. Covers typos and polish.
-- `thought:` An idea that came out of reading the diff, not a request. Always non-blocking. Keep it
-  to a couple of lines.
-- `chore:` Process rather than code. A changelog entry, a ticket link, a screenshot.
-- `praise:` Worth keeping. No decoration.
-
-**Why:** the label does the work the prose was failing at. Unlabelled, the author reverse-engineers
-severity from tone, so a hedge reads as optional and a plain statement reads as a demand. Naming the
-stance lets the sentence stay plain.
-
-Decorations: `(blocking)`, `(non-blocking)`, `(if-minor)`. The last one hands the judgment to the
-author, who resolves it only if the fix stays small. Add a decoration only where the label leaves
-severity open. Never stack two. Never decorate `nitpick:`, `thought:`, or `praise:`, because those
-are non-blocking by definition.
-
-**A retraction takes no label.** It is a reply that names what it retracts and why. Do not restate
-the original comment, because the thread above it already carries the text.
-
-**Address a person by `@login` once in a thread reply or a standalone PR comment.** This covers a
-reply to the author, a reply to another reviewer, and a retraction. Use the plain name after the
-first `@login` in the same comment, never instead of it.
-
-**Why:** GitHub notifies on the mention, not on the name. A reply that only writes "Sam" reaches
-nobody who is not already watching the thread, and a re-raise the author never sees is a re-raise
-that costs a round.
-
-**Never `@`-mention anyone in a new inline comment.** Name the person plainly where the sentence
-needs them.
-
-**Why:** submitting the review already notifies the author, and every inline comment is addressed to
-them by default. A mention on each one adds a duplicate notification and reads as shouting.
-
-Skip the `todo:` and `note:` labels from the specification. `todo:` collides with `TODO` comments in
-code, which carry a different meaning to the team. `note:` is non-blocking by definition, so it is a
-decoration wearing a label's clothes.
-
-### Describe the change. Do not write it.
-
-This governs every label. Name the approach, the existing helper to reach for, the invariant to
-preserve, or the case the current code misses. Never hand the author a drop-in patch or a
-paste-ready snippet.
-
-**Why:** a patch invites the author to accept it without reading it, so the code lands with nobody
-understanding why. It also moves the design decision from the person who owns the file to the person
-who skimmed it.
-
-Use a code fragment only where the shape resists prose. A type signature, a single expression, or a
-function name. Keep it short enough that pasting it would not compile on its own.
-
-### Framing decides what the author does next
-
-A change request is a prompt. Reviews get pasted into an agent as a matter of course, so the framing
-picks the mode the reader drops into.
-
-**Prescriptive framing produces execution mode.** A named fix gets good, well-scoped work. Its
-ceiling is exactly your own insight. It cannot find what no comment points at. Its failure is subtle.
-A correctly-scoped fix retires the only symptom of a defect. The defect stays, and the fixer correctly
-reports it as out of scope.
-
-**Diagnostic framing produces design mode.** Naming the problem and leaving the fix open finds things
-no comment pointed at. Its failure is a finding that is directionally real with a wrong
-recommendation attached.
-
-So: when the right fix is genuinely unclear, say so and leave it open. An open question is what
-licenses a redesign. When a comment is prescriptive, know that it caps the result there.
-
-### Volume is part of readability
-
-Cut any comment that only restates the diff. Collapse repeats, per Step 4. Lead with the blocking
-items. If more than about three findings block, say so at the top rather than making the reader
-count.
+`references/conventional.md` carries the format, the labels, the decorations, the mentions, and the
+framing. Read it before you write a comment.
 
 ### Write the draft to `draft.md`
 
@@ -551,85 +413,13 @@ suggestion (non-blocking): ...
 The heading carries the path and the line. Add `side: LEFT` only for a comment on a deleted line,
 because the API defaults to `RIGHT`. Add `start_line` only for a multi-line anchor.
 
-**Why the fixed shape:** Step 7 copies those fields into the payload rather than re-reading them out
-of prose. A re-derived anchor is where a wrong line comes from, and a compacted context can still
-read this shape back.
-
 The write is not a post. Step 7 still shows the draft and waits for the go-ahead.
 
 ## Step 6. Choose the verdict
 
-The deciding question is "do I have to see the next iteration myself?" It is not "are there issues
-to fix?" and it is not "how bad is the worst finding?"
+Pick one rung of the verdict ladder, once every dispatched axis has reported.
 
-A blocking inline comment already holds the author accountable. It marks a finding fix-before-merge
-without asking to see the fix. Severity picks the comment label. It does not pick the verdict.
-
-**Why:** the team honours a blocking comment. Request Changes on top of one buys no extra guarantee,
-and it costs the author a round-trip.
-
-### The ladder
-
-Each rung asks more of the author than the one below it. Take the lowest rung that holds.
-
-**1. Approve, clean.** Nothing in the review asks the author for anything, the review body included.
-Only `praise:` and `thought:` belong here, because neither carries a request. A `nitpick:` does carry
-one, even though it never blocks. The axis list in the review body is what separates a clean approval
-from a shallow one, so Step 4 makes it the third part.
-
-**2. Approve, with notes.** The review asks for things, and none of them needs you to see the result.
-Blocking comments live on this rung. A review that found real problems with known fixes lands here,
-and that is the normal shape.
-
-**3. Request Changes.** The next iteration is the thing you need to see. One of these has to hold.
-
-- A check from Step 2 fails. Whether the suite goes green is a fact only the next run shows.
-- The fix has no agreed shape. You disputed the approach, so what lands is not predictable.
-- A reply cannot confirm the fix. Only the diff shows it.
-
-Your own prior blocking finding, still unfixed and unanswered, holds this rung on the same logic. You
-asked once already, so the next iteration is still the thing you need to see.
-
-Then ask what round this is. The bar rises steeply, not by one step each time.
-
-| Round | What this rung needs |
-|-------|----------------------|
-| 1 | A case holds. Ordinary, and cheap. |
-| 2 | A case holds, and one sentence names what the next iteration settles. |
-| 3 | Nothing qualifies. Stop, and raise it with the user. |
-
-**Why:** each round costs a full re-read from someone who already read the diff. A PR that reaches a
-third round is no longer arguing about mechanics. It is arguing about design, the two sides are
-flip-flopping, and a comment thread will not settle it. Name a venue that can: a call, a design
-discussion, a conversation with the author. Rung 4 can carry that ask, or post no review and take it
-up directly.
-
-**4. Comment.** A fix is not what you want. A change can be soundly built and still be the wrong
-change. Approving endorses it, and Request Changes asks for a next iteration you cannot describe,
-because the open question is whether to do this at all.
-
-Raise it with the user before you draft anything. A wrong premise or a wrong scope is a conversation,
-not a review artifact.
-
-### Another reviewer's open finding is data
-
-The reviewer who raised a finding owns it. First come, first served. They decide whether it gates,
-and their decision stands whichever way it went. Report it, per the Prior Round axis.
-
-It tells you nothing about your own verdict, in either direction. A finding they gated on is not a
-reason for you to gate. One they approved over is not a reason for you to let it go. You can agree
-with their point, say so, and still need no round-trip of your own.
-
-Gating on their finding also takes it out of their hands. A Request Changes blocks the merge by
-itself, so it overrides the Approve they gave with the finding open.
-
-### Name no verdict until every axis reports
-
-Wait for all dispatched axes, even for a provisional call in the session. A late axis reverses an
-early verdict, and the reversal reads as indecision rather than as new evidence.
-
-Default to the lowest rung that holds. Rung 3 levies a re-review tax. Say what the tax buys, or do
-not levy it.
+`references/verdict.md` carries the ladder. Read it before you choose.
 
 Append the verdict to `draft.md` once you pick it.
 
@@ -644,8 +434,7 @@ covers the wording. The payload gets its own check below.
 [app/javascript/src/viewers/types/base.ts:45](https://github.com/<owner>/<repo>/blob/<sha>/app/javascript/src/viewers/types/base.ts#L45)
 ```
 
-Pin `<sha>` to the head commit so the link cannot drift while the user reads. The user opens the line
-in one click, which is what they do anyway to judge a comment.
+Pin `<sha>` to the head commit so the link cannot drift while the user reads.
 
 **Re-fetch immediately before you post.** Nothing pauses the PR while you review it, and
 nothing pauses it while you wait for the go-ahead. A long pass makes the Step 0 snapshot stale.
@@ -692,9 +481,7 @@ Write `payload.json` from `draft.md`. Every anchor copies across from a comment 
 `replies` takes one entry per prior thread you answer, and the key can be absent. `start_line` and
 `side` are optional on a comment. `event` takes `APPROVE`, `REQUEST_CHANGES` or `COMMENT`.
 
-The script refuses a payload before it writes, on `repo`, `pr`, `review.event` and `review.body`,
-and on a reply missing its `comment_id`. GitHub validates every other field, and names the one it
-rejects.
+The script refuses a payload before it writes. Read `scripts/post.sh` for the fields it checks.
 
 Read the payload back and show that output.
 
@@ -705,10 +492,10 @@ ${CLAUDE_PLUGIN_ROOT}/skills/review-changes/scripts/post.sh /tmp/review-<n>/payl
 Those bytes are what the author reads, anchors included. The final go-ahead attaches to them, not to
 the draft earlier in the session.
 
-**Why through the shell.** Your message text renders as markdown. Shell output does not. Backticks
-that made a subject line legible in chat vanish into a code span there and print literally here.
-GitHub renders them the way chat did, as one code span that swallows the label. Re-printing the draft
-in a message shows you the same rendering that hid the problem the first time.
+Your message text renders as markdown and shell output does not, so re-printing the draft in a
+message shows you the same rendering that hid the problem the first time. Backticks that made a
+subject line legible in chat print literally in shell output, and GitHub renders them the way chat
+did, as one code span that swallows the label.
 
 This checks fidelity, not correctness. It confirms that what ships is what the user approved, and it
 catches a dropped comment or a wrong anchor. It says nothing about whether a finding is right.
@@ -721,13 +508,12 @@ One command, once the user approves those bytes.
 ${CLAUDE_PLUGIN_ROOT}/skills/review-changes/scripts/post.sh /tmp/review-<n>/payload.json --confirm
 ```
 
-It posts one reply per prior thread first, then the review in one call. The review body counts the
-inline comments, re-raises included, so a body that lands ahead of its replies points the author at
-something they cannot find.
+The review body counts the inline comments, re-raises included, so a body that lands ahead of its
+replies points the author at something they cannot find.
 
 **Never hand-roll the calls.** `gh pr review` takes a body and nothing else, so it cannot anchor an
 inline comment. A `gh api` you build yourself skips the read-back.
 
 **When the write is denied, stop.** Do not reshape the command and retry, because retrying a denied
 write is the thing the denial asks you not to do. Show the user the exact command and let them run
-it. Nothing is lost: the wording is approved and the payload is already read back.
+it.
