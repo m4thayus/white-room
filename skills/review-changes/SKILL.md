@@ -514,6 +514,18 @@ Cut any comment that only restates the diff. Collapse repeats, per Step 4. Lead 
 items. If more than about three findings block, say so at the top rather than making the reader
 count.
 
+### Write the draft to the scratch file
+
+Append the draft to the `/tmp` scratch file once every comment is written. Rule 2 names that file,
+and this is the same one.
+
+1. The review body.
+2. Each inline comment, with its path and line.
+
+Name the path in the session on one line.
+
+The write is not a post. Step 7 still shows the draft and waits for the go-ahead.
+
 ## Step 6. Choose the verdict
 
 The deciding question is "do I have to see the next iteration myself?" It is not "are there issues
@@ -588,10 +600,12 @@ early verdict, and the reversal reads as indecision rather than as new evidence.
 Default to the lowest rung that holds. Rung 3 levies a re-review tax. Say what the tax buys, or do
 not levy it.
 
+Append the verdict to the scratch file once you pick it.
+
 ## Step 7. Show, then post
 
-Show the review body and every comment. Wait for the go-ahead. That go-ahead covers the wording. The
-payload gets its own check below.
+Show the review body and every comment from the scratch file. Wait for the go-ahead. That go-ahead
+covers the wording. The payload gets its own check below.
 
 **Head each comment with a link, not a bare path.**
 
@@ -621,7 +635,8 @@ Reconcile the result against the drafted findings.
      re-check of the touched findings only, and posting as drafted.
 3. The PR merged or closed. Stop, and raise it with the user.
 
-Show the revised set and get a fresh go-ahead when anything changed. Post once.
+Show the revised set and get a fresh go-ahead when anything changed. Update the scratch file to
+match, so it never disagrees with the set you showed. Post once.
 
 ### Post the thread replies first, then the review
 
