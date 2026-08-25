@@ -213,6 +213,18 @@ words. A dispatch restates none of the three.
 write. Its brief carries its own output shape, and its dispatch asks for `no failures` where
 everything passes.
 
+**Dispatch through the `white-room:review` workflow where the Workflow tool is available.** Pass it
+`{skillDir, diff, commits, axes, sibling}`, where `skillDir` is this skill's absolute base directory
+and each axis entry is `{axis, payload}`. It returns every axis report and posts nothing.
+
+**The workflow makes two rules into mechanisms.** It carries the model split below in code, and it
+runs the history sweep as its own stage behind Standards and Precedent. A stage either ran or it did
+not, while a line inside a brief competes with everything else in the prompt — which is how both
+axes once answered a history question from the working tree alone.
+
+**Where the tool is missing, dispatch the axes by hand,** one subagent per axis, following the rest
+of this step.
+
 **Set the model on every dispatch.** An axis inherits the session model where the dispatch names
 none, so a whole review runs on Opus. Split it by what the axis needs.
 
@@ -223,7 +235,7 @@ none, so a whole review runs on Opus. Split it by what the axis needs.
 - **Haiku.** Checks. It runs the commands the repo declares and reports what came back, so it judges
   nothing.
 
-**Every subagent prompt carries these parts.**
+**Every by-hand prompt carries these parts.**
 
 1. The diff command and the commit list from Step 0.
 2. The absolute path to the axis brief, resolved from this skill's base directory. A subagent never
