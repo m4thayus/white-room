@@ -2,11 +2,13 @@
 #
 # Read a review draft back as raw text, then post it to the pull request.
 #
-#   post.sh <payload.json>          print the draft, write nothing
-#   post.sh <payload.json> --post   post each thread reply, then the review
+#   post.sh <payload.json>            print the draft, write nothing
+#   post.sh <payload.json> --confirm  post each thread reply, then the review
 #
 # Step 7 of ../SKILL.md defines the payload shape and points here. The checks
-# below catch a payload that drifts from it.
+# below cover only what the read-back does not put on screen, plus the one
+# failure that cannot be rolled back. GitHub validates the rest and names the
+# field it rejects.
 
 set -euo pipefail
 
@@ -14,11 +16,11 @@ payload=${1:-}
 mode=${2:-}
 
 if [[ ! -f ${payload} ]]; then
-  echo "usage: post.sh <payload.json> [--post]" >&2
+  echo "usage: post.sh <payload.json> [--confirm]" >&2
   exit 64
 fi
 
-if [[ -n ${mode} && ${mode} != --post ]]; then
+if [[ -n ${mode} && ${mode} != --confirm ]]; then
   echo "post.sh: unknown argument ${mode}" >&2
   exit 64
 fi
@@ -29,28 +31,20 @@ jq empty "${payload}" 2>/dev/null || {
 }
 
 problems=$(jq -r '
-  def wrong(field; want): (field | type) != want;
-  [ (if wrong(.repo; "string") then "repo: expected \"owner/name\"" else empty end),
-    (if wrong(.pr; "number") then "pr: expected the pull request number" else empty end),
+  def absent(value; want): (value | type) != want or value == "";
+  [ (if absent(.repo; "string") then "repo: expected \"owner/name\"" else empty end),
+    (if absent(.pr; "number") then "pr: expected the pull request number" else empty end),
+    (if absent(.review.body; "string") then "review.body: expected the review body" else empty end),
     (.review.event as $event
      | if ([ "APPROVE", "REQUEST_CHANGES", "COMMENT" ] | index($event // "") | not)
        then "review.event: expected APPROVE, REQUEST_CHANGES or COMMENT" else empty end),
-    (if wrong(.review.body; "string") then "review.body: expected the review body" else empty end),
-    ( (.review.comments // []) | to_entries[]
-      | select((.value | type) != "object"
-               or wrong(.value.path; "string")
-               or wrong(.value.line; "number")
-               or wrong(.value.body; "string"))
-      | "review.comments[\(.key)]: expected path, line and body" ),
     ( (.replies // []) | to_entries[]
-      | select((.value | type) != "object"
-               or wrong(.value.comment_id; "number")
-               or wrong(.value.body; "string"))
-      | "replies[\(.key)]: expected comment_id and body" )
+      | select(absent(.value.comment_id; "number"))
+      | "replies[\(.key)]: expected a numeric comment_id" )
   ] | .[]' "${payload}")
 
 if [[ -n ${problems} ]]; then
-  echo "post.sh: ${payload} does not match the shape step 7 defines" >&2
+  echo "post.sh: ${payload} is missing what the writes need" >&2
   echo "${problems}" >&2
   exit 65
 fi
@@ -62,8 +56,8 @@ jq -r '
     | "--- \(.path) \(.start_line // .line):\(.line) \(.side // "RIGHT") ---", .body )
 ' "${payload}"
 
-if [[ ${mode} != --post ]]; then
-  echo "post.sh: nothing posted. Re-run with --post once the user approves these bytes." >&2
+if [[ ${mode} != --confirm ]]; then
+  echo "post.sh: nothing posted. Re-run with --confirm once the user approves these bytes." >&2
   exit 0
 fi
 
@@ -77,7 +71,8 @@ posted=0
 on_exit() {
   local status=$?
   if (( status != 0 )) && (( posted > 0 )); then
-    echo "post.sh: ${posted} reply/replies already posted. Trim .replies before you re-run --post." >&2
+    echo "post.sh: ${posted} reply/replies already posted." >&2
+    echo "post.sh: trim .replies before you re-run --confirm." >&2
   fi
 }
 trap on_exit EXIT
