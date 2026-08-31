@@ -26,8 +26,8 @@ workflows those skills dispatch.
 plugin offers, so a new skill, a rename or a changed purpose lands there too.
 
 **A rename breaks every invocation of the old name.** User instructions and other skills name a
-skill as `white-room:<name>`, and nothing in this repo catches a stale reference. Each skill carries
-a sync comment saying so. Keep it.
+skill as `white-room:<name>`, and nothing in this repo catches a stale reference. Grep the callers
+before you rename.
 
 ## Commits
 

@@ -3,10 +3,6 @@ name: review-changes
 description: Use when reviewing code changes. Covers a PR, a branch, a diff, changes since a commit, and your own work before you open a PR. Produces findings, inline comments in Conventional Comments format, and an Approve, Request Changes, or Comment verdict. It never edits the code, but it does check out the target, so run one review at a time in a working tree. Open a second worktree to review without stopping other work. Triggers on "review this PR", "review #1234", "review my branch", "review changes since main", "look at this PR", "request changes", "re-review", a later round on a PR you already reviewed, and a self-review before opening a PR.
 ---
 
-<!-- Sync: user or project instructions invoke this skill by name, as `white-room:review-changes`.
-     Renaming the skill or the plugin breaks every one of those invocations, and nothing here
-     catches it. The other end is whatever CLAUDE.md or AGENTS.md names the skill. -->
-
 # Review Changes
 
 ## What this skill owns

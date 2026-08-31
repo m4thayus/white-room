@@ -3,10 +3,6 @@ name: communique
 description: Use before any text leaves this session for a human other than the user — a Slack message or DM, a PR review body or comment, an issue body, a commit message someone else reads. Covers drafting the wording, showing it to the user before it sends, writing for a recipient who has none of this session's context, and repairing something already sent. Triggers on "send this", "post it", "reply to them", "comment on the PR", "request changes", "DM them", "write the commit message", and any gh pr review, gh pr comment or Slack send.
 ---
 
-<!-- Sync: user or project instructions invoke this skill by name, as `white-room:communique`.
-     Renaming the skill or the plugin breaks every one of those invocations, and nothing here
-     catches it. The other end is whatever CLAUDE.md or AGENTS.md names the skill. -->
-
 # Communique
 
 Anything leaving this session for a human other than the user. Slack messages and DMs, PR review

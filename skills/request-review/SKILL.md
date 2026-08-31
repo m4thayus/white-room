@@ -3,10 +3,6 @@ name: request-review
 description: Use when a pull request needs reviewers. Picks two, assigns them on GitHub, then posts one Slack message tagging them with the link and a sentence of context. Triggers on "request review", "request review on #123", "get eyes on this PR", "assign reviewers", "who should review this", and naming the reviewers outright, as in "ask Scott and Priya to review #123".
 ---
 
-<!-- Sync: user or project instructions invoke this skill by name, as `white-room:request-review`.
-     Renaming the skill or the plugin breaks every one of those invocations, and nothing here
-     catches it. The other end is whatever CLAUDE.md or AGENTS.md names the skill. -->
-
 # Request Review
 
 Two reviewers on a pull request, assigned on GitHub, announced once in Slack.
