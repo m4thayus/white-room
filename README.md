@@ -20,6 +20,7 @@ claude plugin install white-room@white-room
 | `review-changes` | Reviews a PR, a branch or a diff. Produces findings and a verdict, and never edits the code. |
 | `communique` | Drafts anything that leaves the session for another human, and gates it on your approval. |
 | `portage` | Writes the handoff document that carries the work across to a fresh session. |
+| `request-review` | Picks two reviewers for a PR, assigns them on GitHub, and announces it once in Slack. |
 
 ## Conventions
 
