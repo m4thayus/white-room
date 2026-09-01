@@ -21,6 +21,8 @@ claude plugin install white-room@white-room
 | `communique` | Drafts anything that leaves the session for another human, and gates it on your approval. |
 | `portage` | Writes the handoff document that carries the work across to a fresh session. |
 | `request-review` | Picks two reviewers for a PR, assigns them on GitHub, and announces it once in Slack. |
+| `standup-prep` | Sweeps GitHub, Linear, git log and Slack, then writes the week's standup-prep note to the vault. |
+| `standup-recap` | Files the meeting's notes markdown into the vault and updates the state-of-work memory note. |
 
 ## Conventions
 
