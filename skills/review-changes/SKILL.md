@@ -222,6 +222,11 @@ write. Send that one to `general-purpose`.
 The strongest model available for the axes that rule on unfamiliar code, a cheaper one for the axes
 an explicit brief drives, and the cheapest for Checks, which judges nothing.
 
+**Sweep history behind Standards and Precedent by hand too.** Neither brief runs the sweep, so
+skipping it leaves both axes ruling on what this repo does from the working tree alone. Dispatch
+one more subagent per axis once that axis reports, and point it at `references/history.md`. The
+workflow does this for you, and the by-hand path does not.
+
 **Every by-hand prompt carries these parts.**
 
 1. The diff command and the commit list from Step 0.

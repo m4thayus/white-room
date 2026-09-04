@@ -4,7 +4,7 @@ export const meta = {
   whenToUse: 'Step 2 of the white-room:review-changes skill. args carry {skillDir, diff, commits, axes, sibling}, where each axis entry is {axis, payload, model, effort}. Returns every axis report verbatim, and posts nothing.',
   phases: [
     { title: 'Axes', detail: 'one agent per axis, each following its own brief file' },
-    { title: 'History', detail: 'git log -S and git log --grep behind Standards and Precedent' },
+    { title: 'History', detail: 'one bounded pickaxe scan behind Standards and Precedent' },
   ],
 }
 
@@ -32,7 +32,8 @@ const MODEL = {
 }
 
 // The two axes that rule on what the repo already does. Both once answered that question from the
-// working tree alone and got it wrong, so the sweep is a stage rather than a line in a brief.
+// working tree alone and got it wrong, so the sweep is a stage rather than a line in a brief. The
+// stage owns it outright: references/history.md carries the commands, and neither brief runs them.
 const HISTORY = ['standards', 'precedent']
 
 const slug = (a) => String(a.axis).toLowerCase().replace(/ /g, '-')
@@ -65,7 +66,7 @@ function sweep(report, a) {
     `The ${a.axis} axis of a review of \`${spec.diff}\` reported this:`,
     report,
     'Rule on it against the repository history, which the axis could not see from the working tree.',
-    `Run the history sweep your brief at ${spec.skillDir}/briefs/${s}.md defines, over every symbol, name or pattern the report rests on. The brief owns the commands.`,
+    `Run the sweep defined at ${spec.skillDir}/references/history.md, over every symbol, name or pattern the report rests on. That file owns the commands and the bounds they carry. Follow it verbatim. Derive the file-kind pathspec it asks for from the extensions \`${spec.diff}\` touches, and read its warning against bounding by directory.`,
     'Report one line per finding: `confirmed`, `refuted`, or `silent`, naming the commit that decides it. Then report any pattern this repo tried and retired that the axis missed, because a retired pattern is prior art. Under 300 words.',
   ]
   return agent(prompt.join('\n\n'), {
