@@ -219,8 +219,16 @@ returns every axis report, and posts nothing.
 write. Send that one to `general-purpose`.
 
 **Set the model on every by-hand dispatch,** because an axis inherits the session model otherwise.
-The strongest model available for the axes that rule on unfamiliar code, a cheaper one for the axes
-an explicit brief drives, and the cheapest for Checks, which judges nothing.
+Pick it by what it costs to catch that axis being wrong.
+
+Precedent, Comments, Prose and Checks each quote the thing that settles their finding, so triage
+re-reads the quote and the mistake surfaces. Give them a cheaper model, and Checks the cheapest.
+
+Correctness, Claims, Standards and Prior Round do not. Only the code settles whether a claim is
+contradicted or a fix landed, so catching a mistake means re-deriving the reasoning. A mistake there
+reaches the author. Give those the strongest model available.
+
+`workflows/review.js` carries the map.
 
 **Sweep history behind Standards and Precedent by hand too.** Neither brief runs the sweep, so
 skipping it leaves both axes ruling on what this repo does from the working tree alone. Dispatch

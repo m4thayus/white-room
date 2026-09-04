@@ -17,9 +17,22 @@ if (!spec.skillDir || !spec.diff || !axes.length) {
   }
 }
 
-// Model per axis. An axis that rules on unfamiliar code gets Opus, because a weaker model there
-// returns a confident wrong finding. An axis working from an explicit brief against bounded input
-// gets Sonnet, because the brief carries the reasoning. Checks judges nothing.
+// Model per axis, picked by what it costs to catch this axis being wrong.
+//
+// Four axes quote the thing that settles their own finding. Precedent's search result settles
+// whether prior art exists, the quoted comment settles whether it is redundant, the quoted prose
+// settles whether it breaks a rule, and a command's output settles whether a check failed. Triage
+// re-reads the quote and the mistake surfaces, so these run cheaper. Checks is cheapest, because
+// re-running one command settles it outright.
+//
+// The other four quote a subject their finding does not settle. Claims quotes the claim, and only
+// the code says whether the code contradicts it. Prior Round quotes the thread, and only the code
+// says whether the fix landed. Correctness and Standards carry the whole judgement in the reasoning.
+// Catching any of those means re-deriving that reasoning, and Step 3 trusts each axis rather than
+// paying it, so the mistake reaches the author. These get the strongest model.
+//
+// The test is not how much reasoning an axis needs. Applying a brief's criteria to unfamiliar code
+// is still reasoning. The test is whether the output shows its own mistake.
 const MODEL = {
   correctness: 'opus',
   claims: 'opus',
