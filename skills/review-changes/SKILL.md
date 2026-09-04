@@ -247,8 +247,32 @@ Read the changed paths first: `git diff --name-only <base>...HEAD`. The paths pi
 
 Add **Prior Round** to either set where Step 0 found prior review rounds.
 
+**One gate on that set, and only this one. Drop Comments where the diff touches no comment line.**
+
+```sh
+git diff <base>...HEAD -U0 | grep -vE '^[-+]{3}' | grep -cE '^[-+][[:space:]]*(//|#|/\*|\*|--|<!--)'
+```
+
+A zero drops the axis. Any other count dispatches it.
+
+**Count both sides of the diff.** A comment moved verbatim shows as one removed line and one added
+line, and it still earns the axis. Every touch is worth re-evaluating, because the code around a
+comment moves even when its wording does not.
+
+The pattern over-matches deliberately. A markdown bullet and a block-comment continuation both open
+with `*`, so both dispatch the axis. A needless dispatch costs one `no findings` line, and a missed
+comment costs a finding.
+
+Dispatch the axis anyway where the diff touches a language whose comment syntax this pattern misses.
+
+Say in the session when you drop it. Never drop it silently.
+
+**Why:** the gate fires often enough to pay for itself. Measured over 120 pull-request-sized diffs
+in an 8562-commit repository, 60 of them touched no comment line at all.
+
 Dispatch every axis the set names, including one whose subject looks thin. An axis with nothing to
-say costs one `no findings` line.
+say costs one `no findings` line. The Comments gate is the one exception, and it turns on a diff you
+checked rather than on a subject that reads as thin.
 
 ### The axis briefs
 
