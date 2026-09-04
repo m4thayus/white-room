@@ -31,6 +31,17 @@ const MODEL = {
   checks: 'haiku',
 }
 
+// The diff each axis reads. An axis that rules on the code reads all of it. Prose rules only on
+// prose, and Checks narrows suites by path rather than reading content, so both read less. Every
+// entry appends to the one diff command Step 0 captured, so the base form stays the skill's.
+//
+// Prose still checks its claims against the code, and it reads the working tree to do that. Step 0
+// checked that tree out to the target under review, so an md-only diff costs Prose nothing.
+const DIFF = {
+  prose: (d) => `${d} -- '*.md' '*.mdx'`,
+  checks: (d) => `${d} --name-only`,
+}
+
 // The two axes that rule on what the repo already does. Both once answered that question from the
 // working tree alone and got it wrong, so the sweep is a stage rather than a line in a brief. The
 // stage owns it outright: references/history.md carries the commands, and neither brief runs them.
@@ -48,10 +59,11 @@ function dispatch(a) {
     agentType: s === 'checks' ? 'general-purpose' : 'white-room:review-axis',
   }
   if (a.effort) opts.effort = a.effort
+  const scope = DIFF[s] || ((d) => d)
   const prompt = [
     `You are the ${a.axis} axis of a code review.`,
     `Read your brief at ${spec.skillDir}/briefs/${s}.md and follow it verbatim. The brief is the authority on what to look for, and it names any reference file it needs relative to its own directory.`,
-    `The diff under review: ${spec.diff}`,
+    `The diff under review: ${scope(spec.diff)}`,
     spec.commits ? `The commits it holds:\n${spec.commits}` : null,
     a.payload || null,
     spec.sibling || null,

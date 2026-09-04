@@ -229,7 +229,9 @@ workflow does this for you, and the by-hand path does not.
 
 **Every by-hand prompt carries these parts.**
 
-1. The diff command and the commit list from Step 0.
+1. The diff command and the commit list from Step 0. Scope the diff for two axes. Prose reads
+   `<diff> -- '*.md' '*.mdx'`, because it rules on prose alone. Checks reads `<diff> --name-only`,
+   because it narrows suites by path rather than by content. Every other axis reads the whole diff.
 2. The absolute path to the axis brief, resolved from this skill's base directory. A subagent never
    sees this file, so a relative path reaches nothing.
 3. **Where Step 0 found a sibling-repo dependency:** the repo, the PR number, and the SHA to read.
