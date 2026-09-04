@@ -274,6 +274,13 @@ Write each axis report to `axes.md` before you triage, verbatim and unmerged.
 verification. Repeating it in the main context refills the context that one axis per subagent kept
 clear.
 
+**One carve-out: an empirical claim you can check in one command.** Run the command. An axis
+reporting that a symbol has no other caller, that a path does not exist, or that a suite is named
+something else costs one `grep` to settle, and a wrong one costs the author a round.
+
+Check the fact, not the finding. This never licenses re-reading the hunk, and it never licenses
+re-deriving the reasoning. Where the check needs more than one command, trust the axis.
+
 **Own the recommendation.** That part is yours, not the subagent's. Check every proposed fix against
 `references/conventional.md` before it becomes a comment. Watch for the retired symptom: a fix that
 resolves the visible failure one level above where the cause lives.
@@ -325,6 +332,23 @@ agreeing with theirs.
 author a full context reload to disprove. State the observation and the reasoning. Do not dress
 uncertainty as a ruling. A finding you are 60% on must read as 60%. Separate "this is wrong" from
 "this looks off, check me".
+
+**Classify each surviving finding by whether its fix is predictable.**
+
+- **Mechanical.** The diagnosis forces the fix. Name that fix in the comment.
+- **Needs a call.** The fix needs a design decision or a trade-off. Name the decision, and name
+  what it turns on.
+
+Severity never picks the bucket. A data-loss bug with one forced fix is mechanical. A nitpick with
+two defensible shapes needs a call. Reaching for needs-a-call because a finding feels serious is
+the most likely way to get this wrong.
+
+The test is whether the resulting diff is predictable. It is not how bad the defect is, and it is
+not who owns the decision. A finding whose fix you can name inline is mechanical.
+
+**Why:** the verdict rests on this. Step 6 asks whether you have to see the next iteration, and a
+predictable diff is one this review already covers. The split also serves the author, because it
+tells them where they owe a decision rather than a patch.
 
 ## Step 4. Group the findings, then place them
 
@@ -423,6 +447,31 @@ Append the verdict to `draft.md` once you pick it.
 
 Show the review body and every comment from `draft.md`. Wait for the go-ahead. That go-ahead
 covers the wording. The payload gets its own check below.
+
+**Show the evidence for each comment, in the session.** A comment is written for the author, so it
+carries the finding rather than the reasoning under it. The user signs the review, so the user needs
+enough to judge each finding without opening the pull request. Give each comment four things.
+
+1. The mechanism. Why the code is wrong, not just that it is.
+2. The trigger. The input, the state, or the call path that reaches it.
+3. The counter-evidence the axis weighed, including why a passing spec does not cover it.
+4. The confidence, and what would settle an uncertain finding.
+
+Add the classification from Step 3, mechanical or needs-a-call.
+
+Take all four from `axes.md`, because the axis already reported them under the finding contract in
+`agents/review-axis.md`. Never reconstruct a mechanism from your own reading of the diff, and never
+present a reconstructed one as the axis's finding. Where an axis report is missing a field, say
+that rather than filling it in.
+
+This evidence stays in the session. It never enters `draft.md`, because the author has no use for
+it.
+
+Length follows the number of findings. Eight findings make a long message, and that is correct. Do
+not compress the evidence into a table.
+
+**Why:** the user is the reviewer of record and signs the approval. A finding they cannot judge
+independently is one they take on faith, which is worse than not raising it.
 
 **Head each comment with a link, not a bare path.**
 
