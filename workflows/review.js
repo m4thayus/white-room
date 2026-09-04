@@ -45,14 +45,22 @@ const MODEL = {
 }
 
 // The diff each axis reads. An axis that rules on the code reads all of it. Prose rules only on
-// prose, and Checks narrows suites by path rather than reading content, so both read less. Every
-// entry appends to the one diff command Step 0 captured, so the base form stays the skill's.
+// prose, and Checks narrows suites by path rather than reading content, so both read less. Comments
+// reads more. Every entry appends to the one diff command Step 0 captured, so the base form stays
+// the skill's.
 //
 // Prose still checks its claims against the code, and it reads the working tree to do that. Step 0
 // checked that tree out to the target under review, so an md-only diff costs Prose nothing.
+//
+// Comments takes function context, because the comment a change invalidates is usually the comment
+// the change never touched. A doc comment sits at the top of the function and the edit lands in the
+// body, so no fixed context window reaches both. Whole-function context reaches both by
+// construction. Lockfiles drop out, because they carry no comment anyone reviews and -W expands
+// them to nearly the whole file.
 const DIFF = {
   prose: (d) => `${d} -- '*.md' '*.mdx'`,
   checks: (d) => `${d} --name-only`,
+  comments: (d) => `${d} -W -- . ':(exclude)*.lock' ':(exclude)*-lock.json'`,
 }
 
 // The two axes that rule on what the repo already does. Both once answered that question from the

@@ -237,9 +237,11 @@ workflow does this for you, and the by-hand path does not.
 
 **Every by-hand prompt carries these parts.**
 
-1. The diff command and the commit list from Step 0. Scope the diff for two axes. Prose reads
+1. The diff command and the commit list from Step 0. Scope the diff for three axes. Prose reads
    `<diff> -- '*.md' '*.mdx'`, because it rules on prose alone. Checks reads `<diff> --name-only`,
-   because it narrows suites by path rather than by content. Every other axis reads the whole diff.
+   because it narrows suites by path rather than by content. Comments reads
+   `<diff> -W -- . ':(exclude)*.lock' ':(exclude)*-lock.json'`, because it rules on a comment the
+   change invalidated and left alone. Every other axis reads the whole diff.
 2. The absolute path to the axis brief, resolved from this skill's base directory. A subagent never
    sees this file, so a relative path reaches nothing.
 3. **Where Step 0 found a sibling-repo dependency:** the repo, the PR number, and the SHA to read.
@@ -257,17 +259,24 @@ Read the changed paths first: `git diff --name-only <base>...HEAD`. The paths pi
 
 Add **Prior Round** to either set where Step 0 found prior review rounds.
 
-**One gate on that set, and only this one. Drop Comments where the diff touches no comment line.**
+**One gate on that set, and only this one. Drop Comments where its own diff holds no comment
+line.**
 
 ```sh
-git diff <base>...HEAD -U0 | grep -vE '^[-+]{3}' | grep -cE '^[-+][[:space:]]*(//|#|/\*|\*|--|<!--)'
+git diff <base>...HEAD -W -- . ':(exclude)*.lock' ':(exclude)*-lock.json' \
+  | grep -vE '^[-+]{3}' | grep -cE '^[-+ ][[:space:]]*(//|#|/\*|\*|--|<!--)'
 ```
 
 A zero drops the axis. Any other count dispatches it.
 
-**Count both sides of the diff.** A comment moved verbatim shows as one removed line and one added
-line, and it still earns the axis. Every touch is worth re-evaluating, because the code around a
-comment moves even when its wording does not.
+**Gate the diff the axis reads, and nothing narrower.** Comments rules on a comment the change
+invalidated without touching, so that comment reaches the axis as a context line. A gate reading
+only the changed lines would drop the axis on exactly the case it exists to catch.
+
+**Count context lines and both changed sides.** An invalidated comment arrives as context. A comment
+moved verbatim shows as one removed line and one added line, and it still earns the axis. Every
+touch is worth re-evaluating, because the code around a comment moves even when its wording does
+not.
 
 The pattern over-matches deliberately. A markdown bullet and a block-comment continuation both open
 with `*`, so both dispatch the axis. A needless dispatch costs one `no findings` line, and a missed
@@ -275,10 +284,16 @@ comment costs a finding.
 
 Dispatch the axis anyway where the diff touches a language whose comment syntax this pattern misses.
 
+**One miss the gate keeps.** A comment in another file can describe code this diff changed, and no
+diff-shaped gate sees it. The axis searches for that comment by name, so dropping the axis drops the
+search too. Dispatch Comments anyway where the diff changes behaviour that a doc or a sibling module
+is likely to describe.
+
 Say in the session when you drop it. Never drop it silently.
 
-**Why:** the gate fires often enough to pay for itself. Measured over 120 pull-request-sized diffs
-in an 8562-commit repository, 60 of them touched no comment line at all.
+**Why:** the gate still pays for itself at the wider scope. Measured over 120 pull-request-sized
+diffs in an 8562-commit repository, 28 of them held no comment line anywhere near a change. The
+narrower gate dropped 60, and 32 of those 60 held a comment beside changed code.
 
 Dispatch every axis the set names, including one whose subject looks thin. An axis with nothing to
 say costs one `no findings` line. The Comments gate is the one exception, and it turns on a diff you
