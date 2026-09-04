@@ -219,12 +219,29 @@ returns every axis report, and posts nothing.
 write. Send that one to `general-purpose`.
 
 **Set the model on every by-hand dispatch,** because an axis inherits the session model otherwise.
-The strongest model available for the axes that rule on unfamiliar code, a cheaper one for the axes
-an explicit brief drives, and the cheapest for Checks, which judges nothing.
+Pick it by what it costs to catch that axis being wrong.
+
+Precedent, Comments, Prose and Checks each quote the thing that settles their finding, so triage
+re-reads the quote and the mistake surfaces. Give them a cheaper model, and Checks the cheapest.
+
+Correctness, Claims, Standards and Prior Round do not. Only the code settles whether a claim is
+contradicted or a fix landed, so catching a mistake means re-deriving the reasoning. A mistake there
+reaches the author. Give those the strongest model available.
+
+`workflows/review.js` carries the map.
+
+**Sweep history behind Standards and Precedent by hand too.** Neither brief runs the sweep, so
+skipping it leaves both axes ruling on what this repo does from the working tree alone. Dispatch
+one more subagent per axis once that axis reports, and point it at `references/history.md`. The
+workflow does this for you, and the by-hand path does not.
 
 **Every by-hand prompt carries these parts.**
 
-1. The diff command and the commit list from Step 0.
+1. The diff command and the commit list from Step 0. Scope the diff for three axes. Prose reads
+   `<diff> -- '*.md' '*.mdx'`, because it rules on prose alone. Checks reads `<diff> --name-only`,
+   because it narrows suites by path rather than by content. Comments reads
+   `<diff> -W -- . ':(exclude)*.lock' ':(exclude)*-lock.json'`, because it rules on a comment the
+   change invalidated and left alone. Every other axis reads the whole diff.
 2. The absolute path to the axis brief, resolved from this skill's base directory. A subagent never
    sees this file, so a relative path reaches nothing.
 3. **Where Step 0 found a sibling-repo dependency:** the repo, the PR number, and the SHA to read.
@@ -242,8 +259,45 @@ Read the changed paths first: `git diff --name-only <base>...HEAD`. The paths pi
 
 Add **Prior Round** to either set where Step 0 found prior review rounds.
 
+**One gate on that set, and only this one. Drop Comments where its own diff holds no comment
+line.**
+
+```sh
+git diff <base>...HEAD -W -- . ':(exclude)*.lock' ':(exclude)*-lock.json' \
+  | grep -vE '^[-+]{3}' | grep -cE '^[-+ ][[:space:]]*(//|#|/\*|\*|--|<!--)'
+```
+
+A zero drops the axis. Any other count dispatches it.
+
+**Gate the diff the axis reads, and nothing narrower.** Comments rules on a comment the change
+invalidated without touching, so that comment reaches the axis as a context line. A gate reading
+only the changed lines would drop the axis on exactly the case it exists to catch.
+
+**Count context lines and both changed sides.** An invalidated comment arrives as context. A comment
+moved verbatim shows as one removed line and one added line, and it still earns the axis. Every
+touch is worth re-evaluating, because the code around a comment moves even when its wording does
+not.
+
+The pattern over-matches deliberately. A markdown bullet and a block-comment continuation both open
+with `*`, so both dispatch the axis. A needless dispatch costs one `no findings` line, and a missed
+comment costs a finding.
+
+Dispatch the axis anyway where the diff touches a language whose comment syntax this pattern misses.
+
+**One miss the gate keeps.** A comment in another file can describe code this diff changed, and no
+diff-shaped gate sees it. The axis searches for that comment by name, so dropping the axis drops the
+search too. Dispatch Comments anyway where the diff changes behaviour that a doc or a sibling module
+is likely to describe.
+
+Say in the session when you drop it. Never drop it silently.
+
+**Why:** the gate still pays for itself at the wider scope. Measured over 120 pull-request-sized
+diffs in an 8562-commit repository, 28 of them held no comment line anywhere near a change. The
+narrower gate dropped 60, and 32 of those 60 held a comment beside changed code.
+
 Dispatch every axis the set names, including one whose subject looks thin. An axis with nothing to
-say costs one `no findings` line.
+say costs one `no findings` line. The Comments gate is the one exception, and it turns on a diff you
+checked rather than on a subject that reads as thin.
 
 ### The axis briefs
 
@@ -273,6 +327,13 @@ Write each axis report to `axes.md` before you triage, verbatim and unmerged.
 **Trust each axis on its own finding.** The subagent that ran the axis already did that
 verification. Repeating it in the main context refills the context that one axis per subagent kept
 clear.
+
+**One carve-out: an empirical claim you can check in one command.** Run the command. An axis
+reporting that a symbol has no other caller, that a path does not exist, or that a suite is named
+something else costs one `grep` to settle, and a wrong one costs the author a round.
+
+Check the fact, not the finding. This never licenses re-reading the hunk, and it never licenses
+re-deriving the reasoning. Where the check needs more than one command, trust the axis.
 
 **Own the recommendation.** That part is yours, not the subagent's. Check every proposed fix against
 `references/conventional.md` before it becomes a comment. Watch for the retired symptom: a fix that
@@ -325,6 +386,23 @@ agreeing with theirs.
 author a full context reload to disprove. State the observation and the reasoning. Do not dress
 uncertainty as a ruling. A finding you are 60% on must read as 60%. Separate "this is wrong" from
 "this looks off, check me".
+
+**Classify each surviving finding by whether its fix is predictable.**
+
+- **Mechanical.** The diagnosis forces the fix. Name that fix in the comment.
+- **Needs a call.** The fix needs a design decision or a trade-off. Name the decision, and name
+  what it turns on.
+
+Severity never picks the bucket. A data-loss bug with one forced fix is mechanical. A nitpick with
+two defensible shapes needs a call. Reaching for needs-a-call because a finding feels serious is
+the most likely way to get this wrong.
+
+The test is whether the resulting diff is predictable. It is not how bad the defect is, and it is
+not who owns the decision. A finding whose fix you can name inline is mechanical.
+
+**Why:** the verdict rests on this. Step 6 asks whether you have to see the next iteration, and a
+predictable diff is one this review already covers. The split also serves the author, because it
+tells them where they owe a decision rather than a patch.
 
 ## Step 4. Group the findings, then place them
 
@@ -423,6 +501,31 @@ Append the verdict to `draft.md` once you pick it.
 
 Show the review body and every comment from `draft.md`. Wait for the go-ahead. That go-ahead
 covers the wording. The payload gets its own check below.
+
+**Show the evidence for each comment, in the session.** A comment is written for the author, so it
+carries the finding rather than the reasoning under it. The user signs the review, so the user needs
+enough to judge each finding without opening the pull request. Give each comment four things.
+
+1. The mechanism. Why the code is wrong, not just that it is.
+2. The trigger. The input, the state, or the call path that reaches it.
+3. The counter-evidence the axis weighed, including why a passing spec does not cover it.
+4. The confidence, and what would settle an uncertain finding.
+
+Add the classification from Step 3, mechanical or needs-a-call.
+
+Take all four from `axes.md`, because the axis already reported them under the finding contract in
+`agents/review-axis.md`. Never reconstruct a mechanism from your own reading of the diff, and never
+present a reconstructed one as the axis's finding. Where an axis report is missing a field, say
+that rather than filling it in.
+
+This evidence stays in the session. It never enters `draft.md`, because the author has no use for
+it.
+
+Length follows the number of findings. Eight findings make a long message, and that is correct. Do
+not compress the evidence into a table.
+
+**Why:** the user is the reviewer of record and signs the approval. A finding they cannot judge
+independently is one they take on faith, which is worse than not raising it.
 
 **Head each comment with a link, not a bare path.**
 

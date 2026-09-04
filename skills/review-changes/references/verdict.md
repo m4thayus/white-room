@@ -32,6 +32,12 @@ and that is the normal shape.
 Your own prior blocking finding, still unfixed and unanswered, holds this rung on the same logic. You
 asked once already, so the next iteration is still the thing you need to see.
 
+Read the classification Step 3 put on each finding. A mechanical finding never carries this rung,
+because its fix lands in a diff you can already predict, and this review covers that diff. A
+needs-a-call finding carries it only where the decision could land in substantially different code.
+Counting needs-a-call findings is not the test. A long list of them is still an approve, and one
+alone can hold this rung.
+
 Then ask what round this is. The bar rises steeply, not by one step each time.
 
 | Round | What this rung needs |
@@ -51,6 +57,15 @@ because the open question is whether to do this at all.
 
 Raise it with the user before you draft anything. A wrong premise or a wrong scope is a conversation,
 not a review artifact.
+
+## An approval is unconditional
+
+Never approve and also route a finding back for your own sign-off before merge. "Ping me on the
+third one" is not a fifth rung. It withholds the trust the approval claims to extend, and it costs
+the round-trip rung 2 exists to avoid.
+
+Approve means "I trust you to fix what this review asks, and I do not need to see it again". A
+finding you do have to see is rung 3, so take rung 3 and say what the next iteration settles.
 
 ## Another reviewer's open finding is data
 

@@ -4,7 +4,7 @@ export const meta = {
   whenToUse: 'Step 2 of the white-room:review-changes skill. args carry {skillDir, diff, commits, axes, sibling}, where each axis entry is {axis, payload, model, effort}. Returns every axis report verbatim, and posts nothing.',
   phases: [
     { title: 'Axes', detail: 'one agent per axis, each following its own brief file' },
-    { title: 'History', detail: 'git log -S and git log --grep behind Standards and Precedent' },
+    { title: 'History', detail: 'one bounded pickaxe scan behind Standards and Precedent' },
   ],
 }
 
@@ -17,9 +17,22 @@ if (!spec.skillDir || !spec.diff || !axes.length) {
   }
 }
 
-// Model per axis. An axis that rules on unfamiliar code gets Opus, because a weaker model there
-// returns a confident wrong finding. An axis working from an explicit brief against bounded input
-// gets Sonnet, because the brief carries the reasoning. Checks judges nothing.
+// Model per axis, picked by what it costs to catch this axis being wrong.
+//
+// Four axes quote the thing that settles their own finding. Precedent's search result settles
+// whether prior art exists, the quoted comment settles whether it is redundant, the quoted prose
+// settles whether it breaks a rule, and a command's output settles whether a check failed. Triage
+// re-reads the quote and the mistake surfaces, so these run cheaper. Checks is cheapest, because
+// re-running one command settles it outright.
+//
+// The other four quote a subject their finding does not settle. Claims quotes the claim, and only
+// the code says whether the code contradicts it. Prior Round quotes the thread, and only the code
+// says whether the fix landed. Correctness and Standards carry the whole judgement in the reasoning.
+// Catching any of those means re-deriving that reasoning, and Step 3 trusts each axis rather than
+// paying it, so the mistake reaches the author. These get the strongest model.
+//
+// The test is not how much reasoning an axis needs. Applying a brief's criteria to unfamiliar code
+// is still reasoning. The test is whether the output shows its own mistake.
 const MODEL = {
   correctness: 'opus',
   claims: 'opus',
@@ -31,8 +44,28 @@ const MODEL = {
   checks: 'haiku',
 }
 
+// The diff each axis reads. An axis that rules on the code reads all of it. Prose rules only on
+// prose, and Checks narrows suites by path rather than reading content, so both read less. Comments
+// reads more. Every entry appends to the one diff command Step 0 captured, so the base form stays
+// the skill's.
+//
+// Prose still checks its claims against the code, and it reads the working tree to do that. Step 0
+// checked that tree out to the target under review, so an md-only diff costs Prose nothing.
+//
+// Comments takes function context, because the comment a change invalidates is usually the comment
+// the change never touched. A doc comment sits at the top of the function and the edit lands in the
+// body, so no fixed context window reaches both. Whole-function context reaches both by
+// construction. Lockfiles drop out, because they carry no comment anyone reviews and -W expands
+// them to nearly the whole file.
+const DIFF = {
+  prose: (d) => `${d} -- '*.md' '*.mdx'`,
+  checks: (d) => `${d} --name-only`,
+  comments: (d) => `${d} -W -- . ':(exclude)*.lock' ':(exclude)*-lock.json'`,
+}
+
 // The two axes that rule on what the repo already does. Both once answered that question from the
-// working tree alone and got it wrong, so the sweep is a stage rather than a line in a brief.
+// working tree alone and got it wrong, so the sweep is a stage rather than a line in a brief. The
+// stage owns it outright: references/history.md carries the commands, and neither brief runs them.
 const HISTORY = ['standards', 'precedent']
 
 const slug = (a) => String(a.axis).toLowerCase().replace(/ /g, '-')
@@ -47,10 +80,11 @@ function dispatch(a) {
     agentType: s === 'checks' ? 'general-purpose' : 'white-room:review-axis',
   }
   if (a.effort) opts.effort = a.effort
+  const scope = DIFF[s] || ((d) => d)
   const prompt = [
     `You are the ${a.axis} axis of a code review.`,
     `Read your brief at ${spec.skillDir}/briefs/${s}.md and follow it verbatim. The brief is the authority on what to look for, and it names any reference file it needs relative to its own directory.`,
-    `The diff under review: ${spec.diff}`,
+    `The diff under review: ${scope(spec.diff)}`,
     spec.commits ? `The commits it holds:\n${spec.commits}` : null,
     a.payload || null,
     spec.sibling || null,
@@ -65,7 +99,7 @@ function sweep(report, a) {
     `The ${a.axis} axis of a review of \`${spec.diff}\` reported this:`,
     report,
     'Rule on it against the repository history, which the axis could not see from the working tree.',
-    `Run the history sweep your brief at ${spec.skillDir}/briefs/${s}.md defines, over every symbol, name or pattern the report rests on. The brief owns the commands.`,
+    `Run the sweep defined at ${spec.skillDir}/references/history.md, over every symbol, name or pattern the report rests on. That file owns the commands and the bounds they carry. Follow it verbatim. Derive the file-kind pathspec it asks for from the extensions \`${spec.diff}\` touches, and read its warning against bounding by directory.`,
     'Report one line per finding: `confirmed`, `refuted`, or `silent`, naming the commit that decides it. Then report any pattern this repo tried and retired that the axis missed, because a retired pattern is prior art. Under 300 words.',
   ]
   return agent(prompt.join('\n\n'), {
