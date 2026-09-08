@@ -16,7 +16,9 @@ to this diff. Invoke whatever coding-standards skills this project
 exposes for the languages the diff touches, and do not restate their rules. Your available-skills
 list names them, so match them to the changed file kinds yourself.
 
-Sweep history before you rule on "this repo has a better way". Run `git log -S<symbol> --all` and
-`git log --grep=<term>`, then `git show` each commit they return. A pattern the repo tried and
-retired is invisible to a working-tree grep, and it is the answer to whether the house way is the
-house way.
+Rule on "this repo has a better way" from the working tree, and name every symbol your ruling
+rests on. A later stage sweeps history behind you and marks each one confirmed, refuted or silent,
+because a pattern the repo tried and retired is invisible to a working-tree grep.
+
+Do not run that sweep yourself. It is the slowest work in the review, and running it here means
+running it twice.

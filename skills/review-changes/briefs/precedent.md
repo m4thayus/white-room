@@ -7,13 +7,15 @@ Report what the repo already does, what it once did, and what it has never done.
 2. **Prior art.** What does this diff do that the repo already does elsewhere? Name the other
    sites.
 
-**Search history, not just the working tree.** Each sweep runs `git log -S<symbol> --all` and
-`git log --grep=<term>`, then `git show` on every commit they return. A working-tree grep alone is
-a wrong answer, because a pattern the repo used four times and retired four times reads as "never
-done" to it. Report a retired pattern as prior art, and say it was retired.
+**Search the working tree, and name what you searched for.** A later stage sweeps history behind
+you, because a pattern the repo used four times and retired four times reads as "never done" to a
+working-tree grep. It reports a retired pattern as prior art.
 
-A search that returns only the new file is the finding. Say which searches you ran to earn it,
-history included.
+Do not run that sweep yourself. It is the slowest work in the review, and running it here means
+running it twice.
+
+A search that returns only the new file is the finding. Say which searches you ran to earn it, so
+the sweep behind you knows what to check.
 
 Report prior art as fact, and do not rule on it. Prior art makes a thing precedented. It does not
 make the thing right, and its absence does not make a thing wrong.
