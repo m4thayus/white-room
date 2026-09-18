@@ -1,0 +1,16 @@
+{
+  "name": "white-room",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "npm run lint:format && npm run lint:markdown && npm run lint:frontmatter",
+    "lint:format": "prettier --check .",
+    "lint:markdown": "markdownlint-cli2 \"**/*.md\"",
+    "lint:frontmatter": "bin/check-frontmatter.js"
+  },
+  "devDependencies": {
+    "lefthook": "^2.1.14",
+    "markdownlint-cli2": "^0.23.2",
+    "prettier": "^3.9.8"
+  }
+}

@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      glob: "*.{md,js,json,jsonc,yml,yaml}"
+      run: node_modules/.bin/prettier --check {staged_files}
+    markdownlint:
+      glob: "*.md"
+      run: node_modules/.bin/markdownlint-cli2 {staged_files}
+    frontmatter:
+      glob: "{skills/*/SKILL.md,agents/*.md}"
+      run: bin/check-frontmatter.js {staged_files}

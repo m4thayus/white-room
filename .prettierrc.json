@@ -1,0 +1,8 @@
+{
+  "arrowParens": "avoid",
+  "printWidth": 120,
+  "semi": false,
+  "trailingComma": "none",
+  "proseWrap": "always",
+  "overrides": [{ "files": "*.md", "options": { "printWidth": 80 } }]
+}

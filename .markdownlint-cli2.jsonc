@@ -1,0 +1,7 @@
+{
+  "ignores": ["AGENTS.md", "node_modules"],
+  "config": {
+    "MD013": { "code_blocks": false, "tables": false },
+    "MD041": { "front_matter_title": "^\\s*(title|name)\\s*[:=]" }
+  }
+}
