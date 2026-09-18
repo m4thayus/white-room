@@ -74,7 +74,7 @@ whole team.
 
 1. **Last week** — what you did. Three minutes.
 2. **This week** — what you will do. Three minutes.
-3. **Process items** — the team section. Vacations, documentation, procedural questions, admin.
+3. **Process items** — the team section. Policies that bind everyone, and findings worth sharing.
 
 **The note carries these three sections and no others.** Earlier versions added `Still owed` and
 `Blockers / risks`. Both cut across the three slots, so the note could not be read out loud. Every
@@ -86,11 +86,15 @@ finding routes into exactly one of the three instead.
   it there as a "Did not land" line.
 - Work you will do → `This week`. A blocker on your own item goes here too, attached to that item.
   You are the person who says it, so it belongs in your slot.
-- Anything the room decides → `Process items`. An unowned issue, a scheduling call that crosses
-  repos, a convention question, a documentation backlog, admin, vacations.
+- Anything that binds the whole team → `Process items`. A policy or convention question, a finding
+  from a PR review or a code change that everyone should know, a scheduling call that crosses
+  repos, admin, vacations.
 
-**The test for the team section: could one person just go and do this?** Yes puts it in
-`This week` under your name. No puts it in `Process items`.
+**The test for the team section: does this change how everyone works, or does everyone need to
+hear it?** Yes puts it in `Process items`. No leaves it in your own two sections.
+
+**Unowned work is not a process item.** The quarterly meeting walks the unowned backlog, and this
+meeting does not. An issue nobody has picked up belongs in that backlog, not in this note.
 
 **Three minutes is about 400 spoken words.** Keep each personal section near that.
 
@@ -100,11 +104,9 @@ finding routes into exactly one of the three instead.
   remembers a bare number.
 - **Open each personal section with one bold lead sentence.** It is the sentence you say if the
   room interrupts you after five seconds.
-- **A top-level bullet gets spoken. A sub-bullet is detail you give only if asked.** That split is
-  the cut line when three minutes run short.
-- **Name the person behind a blocked item.** "Elizabeth has been holding since 08-18" lands.
-  "This blocks downstream work" does not.
-- **Count the weeks on a carried item.** "Five weeks running" is the fact that makes it visible.
+- **Every top-level bullet stands alone.** Someone who has never heard of the item understands it
+  from that one bullet. Nobody asks the follow-up question, so the bullet has to answer it.
+- **A sub-bullet is the part you cut when three minutes run short.** Never park the context there.
 - **Record a dropped item once, with the reason.** A silent deletion returns next week, because
   the reconcile step reads this note.
 
@@ -116,9 +118,8 @@ it as shipped, is not shipped.
 
 **Carry-over comes from last week's prep, checked against this week's sources.** Take last week's
 `This week` items. Route anything no source confirms as done through the three-section test above.
-Most carried items land in this week's `This week`. One that nobody owns lands in `Process items`.
-If the same item was already carried last week too, say how many weeks running — that count is
-what makes a stale item visible instead of quietly re-listed forever.
+Most carried items land in this week's `This week`. One you will not pick up is a dropped item —
+record it once with the reason and let it go.
 
 **Last week's recap corrects the record, not last week's prep file.** If the meeting surfaced
 something the prep note didn't know about, or resolved a "still open" item during the discussion,
@@ -157,12 +158,12 @@ tags: [standup, mercury]
 
 ## Process items
 
-- **<item framed as the decision the room makes>.** <the evidence behind it>
+- **<the policy question, or the finding the team should have>.** <the evidence behind it>
     - <the specific question you want answered>
 ```
 
-Drop a section only when it is genuinely empty. `Process items` rarely is, because an unowned
-issue or an admin item almost always qualifies.
+Drop a section when it is empty. `Process items` often is, and an empty week there beats an item
+re-listed out of habit.
 
 **Show the draft and wait for a yes before writing it.** Nothing here is destructive, but the note
 is what you'll say out loud — worth one read first.
