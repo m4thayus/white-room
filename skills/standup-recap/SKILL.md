@@ -1,6 +1,6 @@
 ---
 name: standup-recap
-description:
+description: >-
   Use once the standup meeting notes markdown exists — pasted, or a file path.
   Files it into the vault under the standup's date, corrects
   transcription-mangled names against memory, and updates the standing

@@ -1,6 +1,6 @@
 ---
 name: standup-prep
-description:
+description: >-
   Use before the weekly Mercury standup. Sweeps GitHub, Linear, git log and
   Slack for what shipped and what's still open, reconciles it against last
   week's prep and recap notes, and writes the week's standup-prep note to the

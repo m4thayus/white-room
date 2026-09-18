@@ -1,6 +1,6 @@
 ---
 name: review-axis
-description:
+description: >-
   One axis of a code review, dispatched by the review-changes skill. Reads a
   diff against a single question — correctness, claims, standards, precedent,
   comments, prose, or a prior round — and reports findings only. It never edits

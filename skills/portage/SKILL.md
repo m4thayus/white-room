@@ -1,6 +1,6 @@
 ---
 name: portage
-description:
+description: >-
   Write the document that carries this session's work across to the next one.
   Use when the context window is running out, when the user stops for the day
   mid-task, or when the work moves to a fresh session. Produces one document

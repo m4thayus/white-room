@@ -3,7 +3,10 @@
   "private": true,
   "scripts": {
     "format": "prettier --write .",
-    "lint": "prettier --check . && markdownlint-cli2 \"**/*.md\""
+    "lint": "npm run lint:format && npm run lint:markdown && npm run lint:frontmatter",
+    "lint:format": "prettier --check .",
+    "lint:markdown": "markdownlint-cli2 \"**/*.md\"",
+    "lint:frontmatter": "bin/check-frontmatter.js"
   },
   "devDependencies": {
     "lefthook": "^2.1.14",

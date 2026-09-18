@@ -7,3 +7,6 @@ pre-commit:
     markdownlint:
       glob: "*.md"
       run: node_modules/.bin/markdownlint-cli2 {staged_files}
+    frontmatter:
+      glob: "{skills/*/SKILL.md,agents/*.md}"
+      run: bin/check-frontmatter.js {staged_files}

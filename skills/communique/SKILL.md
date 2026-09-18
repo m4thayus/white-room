@@ -1,6 +1,6 @@
 ---
 name: communique
-description:
+description: >-
   Use before any text leaves this session for a human other than the user — a
   Slack message or DM, a PR review body or comment, an issue body, a commit
   message someone else reads. Covers drafting the wording, showing it to the

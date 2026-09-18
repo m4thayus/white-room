@@ -39,7 +39,7 @@ reach, such as a fenced block with no language, per `.markdownlint-cli2.jsonc`.
 ## Contributing
 
 ```sh
-npm ci          # installs the tools and wires the pre-commit hook
-npm run format  # prettier --write
-npm run lint    # prettier --check, then markdownlint
+npm ci      # installs the tools and wires the pre-commit hook
+npm run format
+npm run lint  # or lint:format, lint:markdown, lint:frontmatter on their own
 ```
