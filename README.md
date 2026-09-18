@@ -1,14 +1,17 @@
 # The White Room
+
+<!-- markdownlint-disable-next-line MD036 -->
 *A construct for my Claude Code skills*
 
-> I know kung fu.<br />
+> I know kung fu.\
 > — Neo
 
-Personal Claude Code skills. Each one grants a capability by taking options away.
+Personal Claude Code skills. Each one grants a capability by taking options
+away.
 
 ## Install
 
-```
+```sh
 claude plugin marketplace add m4thayus/white-room
 claude plugin install white-room@white-room
 ```
@@ -16,7 +19,7 @@ claude plugin install white-room@white-room
 ## Skills
 
 | Skill | What it does |
-|---|---|
+| --- | --- |
 | `review-changes` | Reviews a PR, a branch or a diff. Produces findings and a verdict, and never edits the code. |
 | `communique` | Drafts anything that leaves the session for another human, and gates it on your approval. |
 | `portage` | Writes the handoff document that carries the work across to a fresh session. |
@@ -26,5 +29,16 @@ claude plugin install white-room@white-room
 
 ## Conventions
 
-Commit subjects follow [Conventional Commits](https://www.conventionalcommits.org/). Types in use:
-`feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `build`.
+Commit subjects follow [Conventional
+Commits](https://www.conventionalcommits.org/). Types in use: `feat`, `fix`,
+`docs`, `refactor`, `chore`, `style`, `build`.
+
+Prose hard-wraps at 80 columns. `markdownlint-cli2` enforces that and the rest
+of the markdown house style, configured in `.markdownlint-cli2.jsonc`.
+
+## Contributing
+
+```sh
+npm ci      # installs the linter and wires the pre-commit hook
+npm run lint
+```
