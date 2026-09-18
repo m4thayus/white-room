@@ -30,7 +30,8 @@ claude plugin install white-room@white-room
 
 Commit subjects follow
 [Conventional Commits](https://www.conventionalcommits.org/). Types in use:
-`feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `build`.
+`feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `build`. `commitlint`
+checks the message on `commit-msg`, per `.commitlintrc.json`.
 
 Prettier owns formatting. It hard-wraps prose at 80 columns and everything else
 at 120, per `.prettierrc.json`. `markdownlint-cli2` owns what a formatter cannot
@@ -39,7 +40,7 @@ reach, such as a fenced block with no language, per `.markdownlint-cli2.jsonc`.
 ## Contributing
 
 ```sh
-npm ci      # installs the tools and wires the pre-commit hook
+npm ci      # installs the tools and wires the git hooks
 npm run format
 npm run lint  # or lint:format, lint:markdown, lint:frontmatter on their own
 ```
