@@ -1,7 +1,6 @@
 # The White Room
 
-<!-- markdownlint-disable-next-line MD036 -->
-*A construct for my Claude Code skills*
+*A construct for my Claude Code skills.*
 
 > I know kung fu.\
 > — Neo
