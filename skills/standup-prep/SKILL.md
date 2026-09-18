@@ -1,6 +1,11 @@
 ---
 name: standup-prep
-description: Use before the weekly Mercury standup. Sweeps GitHub, Linear, git log and Slack for what shipped and what's still open, reconciles it against last week's prep and recap notes, and writes the week's standup-prep note to the vault. Triggers on "standup prep", "prep for standup", "build my standup notes", and "what should I say at standup".
+description:
+  Use before the weekly Mercury standup. Sweeps GitHub, Linear, git log and
+  Slack for what shipped and what's still open, reconciles it against last
+  week's prep and recap notes, and writes the week's standup-prep note to the
+  vault. Triggers on "standup prep", "prep for standup", "build my standup
+  notes", and "what should I say at standup".
 ---
 
 # Standup Prep
@@ -12,7 +17,7 @@ This is the personal, no-MCP-for-Zoom sibling of a sweep — Mercury Analytics
 runs one for its roadmap docs, pulling from GitHub, Linear, a Zoom-transcribed
 standup summary in Gmail, and Slack. This skill has no Gmail or Zoom connection,
 so the meeting side comes from `standup-recap`, a separate skill invoked once
-the notes markdown exists. This skill only builds the *prep* — before the
+the notes markdown exists. This skill only builds the _prep_ — before the
 meeting, from sources that don't need a human to hand them anything.
 
 ## Where the note goes
@@ -167,7 +172,7 @@ tags: [standup, mercury]
 **<one bold lead sentence — the headline of your three minutes>**
 
 - **<what you did>.** <the detail that makes it matter>
-    - <sub-detail, spoken only if asked>
+  - <sub-detail, spoken only if asked>
 - **Did not land: <item>.** <why, and what is actually left>
 
 ## This week
@@ -175,12 +180,13 @@ tags: [standup, mercury]
 **<one bold lead sentence — the thing you most want the room to hear>**
 
 1. **<imperative>.** <why this, why now>
-    - <who is waiting, or what you commit to today>
+   - <who is waiting, or what you commit to today>
 
 ## Process items
 
-- **<the policy question, or the finding the team should have>.** <the evidence behind it>
-    - <the specific question you want answered>
+- **<the policy question, or the finding the team should have>.**
+  <the evidence behind it>
+  - <the specific question you want answered>
 ```
 
 Drop a section when it is empty. `Process items` often is, and an empty week

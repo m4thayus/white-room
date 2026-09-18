@@ -47,11 +47,11 @@ can hold this rung.
 
 Then ask what round this is. The bar rises steeply, not by one step each time.
 
-| Round | What this rung needs |
-| ------- | ---------------------- |
-| 1 | A case holds. Ordinary, and cheap. |
-| 2 | A case holds, and one sentence names what the next iteration settles. |
-| 3 | Nothing qualifies. Stop, and raise it with the user. |
+| Round | What this rung needs                                                  |
+| ----- | --------------------------------------------------------------------- |
+| 1     | A case holds. Ordinary, and cheap.                                    |
+| 2     | A case holds, and one sentence names what the next iteration settles. |
+| 3     | Nothing qualifies. Stop, and raise it with the user.                  |
 
 A PR that reaches a third round is no longer arguing about mechanics. It is
 arguing about design, the two sides are flip-flopping, and a comment thread will

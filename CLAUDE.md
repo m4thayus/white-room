@@ -7,12 +7,12 @@ the agents and workflows those skills dispatch.
 
 ## Layout
 
-| Path | Holds |
-| --- | --- |
+| Path                     | Holds                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
 | `skills/<name>/SKILL.md` | One skill. Add `references/`, `briefs/` or `scripts/` beside it when the skill earns them. |
-| `agents/` | Subagent definitions a skill dispatches. |
-| `workflows/` | Workflow scripts a skill runs. |
-| `.claude-plugin/` | `plugin.json` and `marketplace.json`. |
+| `agents/`                | Subagent definitions a skill dispatches.                                                   |
+| `workflows/`             | Workflow scripts a skill runs.                                                             |
+| `.claude-plugin/`        | `plugin.json` and `marketplace.json`.                                                      |
 
 ## Adding or changing a skill
 

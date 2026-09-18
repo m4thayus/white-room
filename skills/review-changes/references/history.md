@@ -21,11 +21,11 @@ carries the work.
 git log -S'<symbol>' HEAD --format='%h %s' -- '*.rb' '*.rake'
 ```
 
-| Form | Time | Commits found |
-| --- | --- | --- |
-| `-S'<symbol>' --all` | 198.4s | 12 |
-| `-S'<symbol>' HEAD` | 162.9s | 12 |
-| `-S'<symbol>' HEAD -- '*.rb'` | **0.39s** | 12 |
+| Form                          | Time      | Commits found |
+| ----------------------------- | --------- | ------------- |
+| `-S'<symbol>' --all`          | 198.4s    | 12            |
+| `-S'<symbol>' HEAD`           | 162.9s    | 12            |
+| `-S'<symbol>' HEAD -- '*.rb'` | **0.39s** | 12            |
 
 Identical results, 510 times faster. A file-kind pathspec bounds the walk
 without bounding where it looks, so it still sees a pattern retired from a

@@ -1,6 +1,12 @@
 ---
 name: portage
-description: Write the document that carries this session's work across to the next one. Use when the context window is running out, when the user stops for the day mid-task, or when the work moves to a fresh session. Produces one document holding the decision and its why, the facts already established with their evidence, and what is still open, then prints the one-line prompt that opens the next session. The user invokes it, and it writes nothing else.
+description:
+  Write the document that carries this session's work across to the next one.
+  Use when the context window is running out, when the user stops for the day
+  mid-task, or when the work moves to a fresh session. Produces one document
+  holding the decision and its why, the facts already established with their
+  evidence, and what is still open, then prints the one-line prompt that opens
+  the next session. The user invokes it, and it writes nothing else.
 argument-hint: [what the next session picks up]
 disable-model-invocation: true
 ---

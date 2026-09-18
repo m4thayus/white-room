@@ -55,7 +55,7 @@ still arrives in front of you. Report seven things.
    and never call the sweep exhaustive.
 
 Configuration takes a lighter pass. A setting's wording is frequently opaque on
-its own terms, and its *why* is rarely derivable from the value, so a comment
+its own terms, and its _why_ is rarely derivable from the value, so a comment
 there earns its place more easily. Still read it. Report one that is genuinely
 redundant or bloated, and do not go hunting for one.
 
@@ -63,7 +63,7 @@ The exception to one fact, one home is the sync comment. Sometimes this code
 silently depends on code elsewhere: a wire format, a shared schema, an ordering
 both ends assume, a constant another service parses. Then the comment belongs at
 both ends, and each copy names the other. The other end may be another file,
-another package, or another repo. Test it: could someone editing *this* code
+another package, or another repo. Test it: could someone editing _this_ code
 break the invariant without ever opening the other one? Yes means replicate the
 fact. No means make it a pointer.
 

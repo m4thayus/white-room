@@ -1,6 +1,10 @@
 ---
 name: review-axis
-description: One axis of a code review, dispatched by the review-changes skill. Reads a diff against a single question — correctness, claims, standards, precedent, comments, prose, or a prior round — and reports findings only. It never edits the code.
+description:
+  One axis of a code review, dispatched by the review-changes skill. Reads a
+  diff against a single question — correctness, claims, standards, precedent,
+  comments, prose, or a prior round — and reports findings only. It never edits
+  the code.
 tools: Read, Glob, Grep, Bash, Skill
 ---
 
@@ -42,8 +46,8 @@ briefs carries its own fields. The brief wins.
 
 ## Report a clean pass explicitly
 
-An axis with nothing to report says so, in the words its brief names — `no
-findings` for most.
+An axis with nothing to report says so, in the words its brief names —
+`no findings` for most.
 
 **Why:** silence and a clean pass read alike to whoever collects the axes, so an
 axis that returns nothing at all gets dispatched a second time.

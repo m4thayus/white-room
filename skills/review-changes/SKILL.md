@@ -1,6 +1,12 @@
 ---
 name: review-changes
-description: Use when reviewing code changes. Covers a PR, a branch, a diff, changes since a commit, and your own work before you open a PR. Produces findings, inline comments in Conventional Comments format, and an Approve, Request Changes, or Comment verdict. It never edits the code, but it does check out the target, so run one review at a time in a working tree. Open a second worktree to review without stopping other work. Triggers on "review this PR", "review #1234", "review my branch", "review changes since main", "look at this PR", "request changes", "re-review", a later round on a PR you already reviewed, and a self-review before opening a PR.
+description: Use when reviewing code changes. Covers a PR, a branch, a diff,
+  changes since a commit, and your own work before you open a PR. Produces
+  findings, inline comments in Conventional Comments format, and an Approve,
+  Request Changes, or Comment verdict. It never edits the code, but it does
+  check out the target, so run one review at a time in a working tree. Open a
+  second worktree to review without stopping other work. Triggers on "review
+  this PR", "review #1234", "review my branch", "review changes since main", "look at this PR", "request changes", "re-review", a later round on a PR you already reviewed, and a self-review before opening a PR.
 ---
 
 # Review Changes
@@ -42,11 +48,11 @@ imperative-sounding phrase during a review describes the work. It does not
 authorize the work. "Just do the crate shifting" characterizes a change as
 mechanical. Only "make the change", or a clear equivalent, authorizes one.
 
-Detect whose branch it is before any edit. Run `git log <base>..HEAD
---format='%an'`. If any name other than the user's appears, the branch is
-someone else's, and editing it steps on their work. Stay in review mode until
-told otherwise. A branch the user pushed one commit to is still not the user's
-branch.
+Detect whose branch it is before any edit. Run
+`git log <base>..HEAD --format='%an'`. If any name other than the user's
+appears, the branch is someone else's, and editing it steps on their work. Stay
+in review mode until told otherwise. A branch the user pushed one commit to is
+still not the user's branch.
 
 Self-review does not relax this rule on its own. Produce the findings first.
 Applying them is a separate step the user asks for.
@@ -130,12 +136,12 @@ number, or the branch name where no pull request exists. Replace every character
 outside `a-z`, `0-9` and `-` with a hyphen, so a branch name stays one
 directory. Name it in the session once, when Step 0 creates it.
 
-| File | Written by | Holds |
-| --- | --- | --- |
-| `prior.json` | Step 0 | The prior review bodies and every inline thread |
-| `axes.md` | Step 3 | Each axis report, verbatim and unmerged |
-| `draft.md` | Step 5 | The review body, every comment with its anchor, and the verdict |
-| `payload.json` | Step 7 | The payload `post.sh` reads back and posts |
+| File           | Written by | Holds                                                           |
+| -------------- | ---------- | --------------------------------------------------------------- |
+| `prior.json`   | Step 0     | The prior review bodies and every inline thread                 |
+| `axes.md`      | Step 3     | Each axis report, verbatim and unmerged                         |
+| `draft.md`     | Step 5     | The review body, every comment with its anchor, and the verdict |
+| `payload.json` | Step 7     | The payload `post.sh` reads back and posts                      |
 
 `draft.md` is the one file that has to survive a compaction, because it alone
 reconstructs the review. Keep the other three out of it.
@@ -165,8 +171,8 @@ ref you moved to in the session, so the user sees the tree move.
 
 Confirm the base ref resolves and the diff is not empty. Capture one diff
 command and reuse it: `git diff <base>...HEAD`. Use three dots so the comparison
-runs against the merge-base. Capture the commit list with `git log <base>..HEAD
---oneline`.
+runs against the merge-base. Capture the commit list with
+`git log <base>..HEAD --oneline`.
 
 Fail here on a bad ref or an empty diff. Do not fail inside a subagent.
 
@@ -239,11 +245,11 @@ body. See Step 4.
 
 One axis per subagent, so no axis sees another's reasoning.
 
-**Dispatch through the `white-room:review` workflow.** Pass it `{skillDir, diff,
-commits, axes, sibling}`, where `skillDir` is this skill's absolute base
-directory and each axis entry is `{axis, payload}`. It sets the model per axis,
-sweeps history behind Standards and Precedent, returns every axis report, and
-posts nothing.
+**Dispatch through the `white-room:review` workflow.** Pass it
+`{skillDir, diff, commits, axes, sibling}`, where `skillDir` is this skill's
+absolute base directory and each axis entry is `{axis, payload}`. It sets the
+model per axis, sweeps history behind Standards and Precedent, returns every
+axis report, and posts nothing.
 
 **Where the Workflow tool is missing, dispatch the axes by hand.** One subagent
 per axis, as the `review-axis` agent — except Checks, which runs the repo's
@@ -276,9 +282,10 @@ you, and the by-hand path does not.
 1. The diff command and the commit list from Step 0. Scope the diff for three
    axes. Prose reads `<diff> -- '*.md' '*.mdx'`, because it rules on prose
    alone. Checks reads `<diff> --name-only`, because it narrows suites by path
-   rather than by content. Comments reads `<diff> -W -- . ':(exclude)*.lock'
-   ':(exclude)*-lock.json'`, because it rules on a comment the change
-   invalidated and left alone. Every other axis reads the whole diff.
+   rather than by content. Comments reads
+   `<diff> -W -- . ':(exclude)*.lock' ':(exclude)*-lock.json'`, because it rules
+   on a comment the change invalidated and left alone. Every other axis reads
+   the whole diff.
 2. The absolute path to the axis brief, resolved from this skill's base
    directory. A subagent never sees this file, so a relative path reaches
    nothing.
@@ -408,12 +415,12 @@ theoretical. Route Checks below, and route Precedent and Prior Round through
 
 For each surviving finding, ask these four questions.
 
-| Question | Real | Theoretical |
-| --- | --- | --- |
-| Can this happen through actual usage? | yes | only via artificial test setup |
-| Is this at a system boundary (user input, external API)? | yes | no, internal code with structural guarantees |
-| Does a structural constraint prevent it? (OS modal, event loop, type system) | no | yes |
-| Is this a public API / library surface? | yes | no, closed app, internal use |
+| Question                                                                     | Real | Theoretical                                  |
+| ---------------------------------------------------------------------------- | ---- | -------------------------------------------- |
+| Can this happen through actual usage?                                        | yes  | only via artificial test setup               |
+| Is this at a system boundary (user input, external API)?                     | yes  | no, internal code with structural guarantees |
+| Does a structural constraint prevent it? (OS modal, event loop, type system) | no   | yes                                          |
+| Is this a public API / library surface?                                      | yes  | no, closed app, internal use                 |
 
 Real findings become comments. Drop a theoretical finding, or turn it into an
 adjacent note that says why it is theoretical. Defensive programming suits a
@@ -543,8 +550,8 @@ section per inline comment, in this shape.
 
 ```markdown
 ## app/javascript/src/viewers/types/base.ts:45
-side: LEFT
-start_line: 43
+
+side: LEFT start_line: 43
 
 suggestion (non-blocking): ...
 ```
@@ -608,18 +615,18 @@ Pin `<sha>` to the head commit so the link cannot drift while the user reads.
 
 **Re-fetch immediately before you post.** Nothing pauses the PR while you review
 it, and nothing pauses it while you wait for the go-ahead. A long pass makes the
-Step 0 snapshot stale. Re-run the Step 0 prior-round commands, and add `gh pr
-view <n> --json state,reviewDecision,headRefOid`.
+Step 0 snapshot stale. Re-run the Step 0 prior-round commands, and add
+`gh pr view <n> --json state,reviewDecision,headRefOid`.
 
 Reconcile the result against the drafted findings.
 
 1. Another reviewer already made a point you drafted. Drop your comment, and
    reply on their thread instead.
 2. `headRefOid` moved. Always say so in the session, and name what moved. Run
-   `git log <old-oid>..<new-oid> --oneline`, then `git diff
-   <old-oid>..<new-oid>` over the files your findings cite. Judge by the cited
-   lines, not by the file list. A merge from the base branch churns whole files
-   while leaving every finding intact.
+   `git log <old-oid>..<new-oid> --oneline`, then
+   `git diff <old-oid>..<new-oid>` over the files your findings cite. Judge by
+   the cited lines, not by the file list. A merge from the base branch churns
+   whole files while leaving every finding intact.
    - Your cited lines are untouched. Say so, and post.
    - The author already fixed a finding you drafted. Drop that one, and post the
      rest.

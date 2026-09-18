@@ -1,5 +1,4 @@
 {
-  "globs": ["**/*.md"],
   "ignores": ["AGENTS.md", "node_modules"],
   "config": {
     "MD013": { "code_blocks": false, "tables": false },

@@ -1,6 +1,13 @@
 ---
 name: communique
-description: Use before any text leaves this session for a human other than the user — a Slack message or DM, a PR review body or comment, an issue body, a commit message someone else reads. Covers drafting the wording, showing it to the user before it sends, writing for a recipient who has none of this session's context, and repairing something already sent. Triggers on "send this", "post it", "reply to them", "comment on the PR", "request changes", "DM them", "write the commit message", and any gh pr review, gh pr comment or Slack send.
+description:
+  Use before any text leaves this session for a human other than the user — a
+  Slack message or DM, a PR review body or comment, an issue body, a commit
+  message someone else reads. Covers drafting the wording, showing it to the
+  user before it sends, writing for a recipient who has none of this session's
+  context, and repairing something already sent. Triggers on "send this", "post
+  it", "reply to them", "comment on the PR", "request changes", "DM them",
+  "write the commit message", and any gh pr review, gh pr comment or Slack send.
 ---
 
 # Communique
@@ -36,18 +43,18 @@ the ask has a deadline.
 Every platform with a mention syntax follows the same rule. These are the ones
 this session reaches.
 
-| Platform | First mention |
-| --- | --- |
-| GitHub | `@handle` |
-| Linear | `@handle` |
-| Slack | `<@U01ABCDEF>`, which renders as their display name |
+| Platform | First mention                                       |
+| -------- | --------------------------------------------------- |
+| GitHub   | `@handle`                                           |
+| Linear   | `@handle`                                           |
+| Slack    | `<@U01ABCDEF>`, which renders as their display name |
 
 Slack also broadcasts to a whole channel, and this is where time sensitivity
 gets said out loud.
 
-| Broadcast | Reaches | Connotes |
-| --- | --- | --- |
-| `<!here>` | members currently active | act on this today |
+| Broadcast    | Reaches                     | Connotes                                  |
+| ------------ | --------------------------- | ----------------------------------------- |
+| `<!here>`    | members currently active    | act on this today                         |
 | `<!channel>` | every member, active or not | the channel is blocked until someone does |
 
 A broadcast never replaces the tag on the person who owns the ask. Name them
@@ -61,8 +68,8 @@ because a wrong ID pings the wrong person.
 
 Offer the repair rather than leaving it.
 
-- PR review bodies edit in place: `gh api PATCH
-  /repos/{owner}/{repo}/pulls/{n}/reviews/{id}`
+- PR review bodies edit in place:
+  `gh api PATCH /repos/{owner}/{repo}/pulls/{n}/reviews/{id}`
 - PR and issue comments edit and delete
 - Slack messages edit
 
@@ -109,9 +116,9 @@ Conventional Commits, in every repo.
   `auth`. Omit it when the change is repo-wide.
 - **Subject** is lowercase and imperative, with no trailing period.
 - **Append the issue ref where the project does.** Read the recent log first,
-  and match it: `fix(export): drop the duplicate header row from CSV output
-  (ENG-1234)`. GitHub adds the PR number on squash merge, so never write that
-  yourself.
+  and match it:
+  `fix(export): drop the duplicate header row from CSV output (ENG-1234)`.
+  GitHub adds the PR number on squash merge, so never write that yourself.
 
 ## Two habits to drop on the way through
 

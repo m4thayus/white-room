@@ -1,6 +1,12 @@
 ---
 name: standup-recap
-description: Use once the standup meeting notes markdown exists — pasted, or a file path. Files it into the vault under the standup's date, corrects transcription-mangled names against memory, and updates the standing state-of-work note from what the room actually said. Triggers on "file the standup recap", "here's the standup notes", "standup notes are ready", and pasting a Zoom-style meeting summary.
+description:
+  Use once the standup meeting notes markdown exists — pasted, or a file path.
+  Files it into the vault under the standup's date, corrects
+  transcription-mangled names against memory, and updates the standing
+  state-of-work note from what the room actually said. Triggers on "file the
+  standup recap", "here's the standup notes", "standup notes are ready", and
+  pasting a Zoom-style meeting summary.
 ---
 
 # Standup Recap

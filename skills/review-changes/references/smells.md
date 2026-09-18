@@ -1,7 +1,7 @@
 # Code smells
 
 A fixed set of code smells for the Standards axis. Source: Fowler,
-*Refactoring*, ch. 3.
+_Refactoring_, ch. 3.
 
 This baseline applies even when the repo documents no standards of its own. Two
 rules bind it.
@@ -15,7 +15,7 @@ rules bind it.
 **Skip anything tooling already enforces.** A lint rule or a formatter makes the
 finding noise.
 
-Each entry reads *what it is* then *how to fix it*. Match each against the diff.
+Each entry reads _what it is_ then _how to fix it_. Match each against the diff.
 
 - **Mysterious Name**. A function, variable, or type whose name hides what it
   does or holds. → Rename it. If no honest name comes, the design is murky.

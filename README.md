@@ -1,6 +1,6 @@
 # The White Room
 
-*A construct for my Claude Code skills.*
+_A construct for my Claude Code skills._
 
 > I know kung fu.\
 > — Neo
@@ -17,27 +17,29 @@ claude plugin install white-room@white-room
 
 ## Skills
 
-| Skill | What it does |
-| --- | --- |
-| `review-changes` | Reviews a PR, a branch or a diff. Produces findings and a verdict, and never edits the code. |
-| `communique` | Drafts anything that leaves the session for another human, and gates it on your approval. |
-| `portage` | Writes the handoff document that carries the work across to a fresh session. |
-| `request-review` | Picks two reviewers for a PR, assigns them on GitHub, and announces it once in Slack. |
-| `standup-prep` | Sweeps GitHub, Linear, git log and Slack, then writes the week's standup-prep note to the vault. |
-| `standup-recap` | Files the meeting's notes markdown into the vault and updates the state-of-work memory note. |
+| Skill            | What it does                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
+| `review-changes` | Reviews a PR, a branch or a diff. Produces findings and a verdict, and never edits the code.     |
+| `communique`     | Drafts anything that leaves the session for another human, and gates it on your approval.        |
+| `portage`        | Writes the handoff document that carries the work across to a fresh session.                     |
+| `request-review` | Picks two reviewers for a PR, assigns them on GitHub, and announces it once in Slack.            |
+| `standup-prep`   | Sweeps GitHub, Linear, git log and Slack, then writes the week's standup-prep note to the vault. |
+| `standup-recap`  | Files the meeting's notes markdown into the vault and updates the state-of-work memory note.     |
 
 ## Conventions
 
-Commit subjects follow [Conventional
-Commits](https://www.conventionalcommits.org/). Types in use: `feat`, `fix`,
-`docs`, `refactor`, `chore`, `style`, `build`.
+Commit subjects follow
+[Conventional Commits](https://www.conventionalcommits.org/). Types in use:
+`feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `build`.
 
-Prose hard-wraps at 80 columns. `markdownlint-cli2` enforces that and the rest
-of the markdown house style, configured in `.markdownlint-cli2.jsonc`.
+Prettier owns formatting. It hard-wraps prose at 80 columns and everything else
+at 120, per `.prettierrc.json`. `markdownlint-cli2` owns what a formatter cannot
+reach, such as a fenced block with no language, per `.markdownlint-cli2.jsonc`.
 
 ## Contributing
 
 ```sh
-npm ci      # installs the linter and wires the pre-commit hook
-npm run lint
+npm ci          # installs the tools and wires the pre-commit hook
+npm run format  # prettier --write
+npm run lint    # prettier --check, then markdownlint
 ```
