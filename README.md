@@ -30,8 +30,9 @@ claude plugin install white-room@white-room
 
 Commit subjects follow
 [Conventional Commits](https://www.conventionalcommits.org/). Types in use:
-`feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `build`. `commitlint`
-checks the message on `commit-msg`, per `.commitlintrc.json`.
+`feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `build`, `perf`, `test`,
+`ci`, `revert` — the `config-conventional` set, mirrored as issue labels.
+`commitlint` checks the message on `commit-msg`, per `.commitlintrc.json`.
 
 Prettier owns formatting. It hard-wraps prose at 80 columns and everything else
 at 120, per `.prettierrc.json`. `markdownlint-cli2` owns what a formatter cannot

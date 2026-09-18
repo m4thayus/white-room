@@ -111,7 +111,8 @@ Conventional Commits, in every repo.
     type(scope): subject
 
 - **Types in use:** `feat`, `fix`, `docs`, `refactor`, `chore`, `style`,
-  `build`. Pick the one that describes the change, not the files it touched.
+  `build`, `perf`, `test`, `ci`, `revert`. Pick the one that describes the
+  change, not the files it touched.
 - **Scope** is lowercase and names the area — `claude`, `tmux`, `viewer`,
   `auth`. Omit it when the change is repo-wide.
 - **Subject** is lowercase and imperative, with no trailing period.
