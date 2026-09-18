@@ -1,8 +1,11 @@
 ---
 name: request-review
-description: Use when a pull request needs reviewers. Picks two, assigns them on
-  GitHub, then posts one Slack message tagging them with the link and a sentence
-  of context. Triggers on "request review", "request review on #123", "get eyes on this PR", "assign reviewers", "who should review this", and naming the reviewers outright, as in "ask Scott and Priya to review #123".
+description: >-
+  Use when a pull request needs reviewers. Picks two, assigns them on GitHub,
+  then posts one Slack message tagging them with the link and a sentence of
+  context. Triggers on "request review", "request review on #123", "get eyes on
+  this PR", "assign reviewers", "who should review this", and naming the
+  reviewers outright, as in "ask Scott and Priya to review #123".
 ---
 
 # Request Review
