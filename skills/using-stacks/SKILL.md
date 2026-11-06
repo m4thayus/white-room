@@ -59,6 +59,8 @@ match v0.2.1.
 | `push`                     | Pushes the stack's active branches.                                          |
 | `unstack --local`          | Deletes the local stack only. Without `--local` it deletes it on GitHub.     |
 
+To list every stack in a repository, run `gh api repos/{owner}/{repo}/stacks`.
+
 ## Landing
 
 The stack manages development and review, not landing. Each PR squash-merges
@@ -73,8 +75,8 @@ into the default branch on its own, bottom first.
 4. Repeat for the next PR.
 
 A squash merge creates a new commit, so git can't match it to the lower branch's
-original commits. `sync` handles that, and the unwind has needed no repair so
-far. If step 3 shows the lower branch's original commits, the manual fallback is
+original commits. `sync` handles that. If step 3 shows the lower branch's
+original commits, the manual fallback is
 `git rebase --onto <default-branch> <old-parent-branch>`.
 
 ## Force pushes
@@ -91,4 +93,5 @@ merge commits. Get it only through those commands. Never type a
 - `gh stack merge` lands the whole stack at once. It needs a per-repository
   capability, and it errors with "async stack merge is not available for this
   repository" where that capability is off.
-- `gh api repos/{owner}/{repo}/stacks` lists a repository's stacks.
+- `view` shows only the current stack, and no `gh stack` command lists them all.
+  Commands carries the API call that does.
